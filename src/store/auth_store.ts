@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import apiClient from "../api/index";
+import apiClient from "../api/index.api";
 import type { TLoginSchema } from "../lib/validators";
 
 interface User {

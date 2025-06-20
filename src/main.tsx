@@ -1,10 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import JiraCloneFrond from './JiraCloneFrond'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 
-createRoot(document.getElementById('root')!).render(
+import { JiraCloneFrond } from "./JiraCloneFrond";
+
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <JiraCloneFrond />
   </StrictMode>,
-)
+);
