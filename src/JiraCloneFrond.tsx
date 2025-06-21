@@ -1,17 +1,10 @@
+import {RouterProvider} from 'react-router'
+import { router } from './router/index.route';
 
-
-import { LoginPages } from './pages/LoginPages'
-
-
-
-function JiraCloneFrond() {
-
-
+export const JiraCloneFrond = () => {
   return (
     <>
-      <LoginPages />
+      <RouterProvider router={router} />
     </>
-  )
-}
-
-export default JiraCloneFrond
+  );
+};
