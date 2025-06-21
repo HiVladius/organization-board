@@ -9,10 +9,8 @@ export const AppLayout = () => {
     const handleLogout = () => {
         logout();
         navigate("/login");
-    };
-
-    return (
-        <div className="flex h-screen, bg-slate-900 text-white">
+    };    return (
+        <div className="flex h-screen bg-slate-900 text-white">
             <aside className="w-64 flex-shrink-0 bg-slate-800 p-4">
                 <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-cyan-500" />
@@ -38,9 +36,7 @@ export const AppLayout = () => {
                             Cerrar sesión
                         </button>
                     </div>
-                </header>
-
-                <main className="flex-1 overflow-y-auto p-6">
+                </header>                <main className="flex-1 overflow-y-auto p-6 bg-slate-900">
                     <Outlet />
                 </main>
             </div>

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { LoginPages } from "../pages/LoginPages";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { DashboardPage } from "../pages/DashboardPage";
+import { ProjectPage } from "../pages/ProjectsPage";
 
 
 export const router = createBrowserRouter([
@@ -14,8 +14,8 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
             {
-                index: false,
-                element: <DashboardPage />
+                index: true,
+                element: <ProjectPage />
             }
         ]
     }
