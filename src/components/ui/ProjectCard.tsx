@@ -1,3 +1,5 @@
+
+import { Link } from "react-router-dom";
 import type { Project } from "../../types/index.types";
 
 interface ProjectCardProps {
@@ -5,8 +7,11 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
+    console.log('ProjectCard received - project.id:', project.id, 'Type:', typeof project.id);
+    console.log('ProjectCard - Full project:', project);
+    
     return (
-        <div className="flex cursor-pointer flex-col rounded-lg border border-slate-700 bg-slate-800 p-4 transition-colors hover:bg-slate-700/50">
+        <Link to={`/project/${project.id}`} className="flex flex-col gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4 transition-colors hover:bg-slate-700/50" >
             <div className="flex items-center gap-3">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-slate-700 text-lg font-bold">
@@ -24,6 +29,6 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                     {project.description}
                 </p>
             )}
-        </div>
+        </Link>
     );
 };
