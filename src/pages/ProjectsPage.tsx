@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { ProjectCard } from "../components/ui/ProjectCard";
 import { useProjectStore } from "../store/project.store";
+import { useAuthStore } from "../../src/store/auth_store";
 import { Modal } from "../components/ui/Modal";
 import { CreateProjectForm } from "../components/CreateProjectForm";
 
 export const ProjectPage = () => {
   const { projects, isLoading, fetchProjects } = useProjectStore();
+  const { user } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // const projectsData = use(fetchProjects());
@@ -23,7 +25,7 @@ export const ProjectPage = () => {
           <div>
             <h1 className="text-3xl font-bold text-white">Proyectos</h1>
             <p className="mt-1 text-slate-400">
-              Aquí estan los proyectos en los que estás trabajando
+              Aquí estan tus proyectos <strong>{user?.username || "Usuario"}.</strong>
             </p>
           </div>
           <button

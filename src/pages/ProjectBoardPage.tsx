@@ -1,15 +1,7 @@
-import { useEffect, useMemo, useOptimistic, useRef } from "react";
+import { useEffect, useMemo, useOptimistic, startTransition } from "react";
 import { useParams } from "react-router-dom";
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import { DndContext } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import { TaskColum } from "../components/tasks/TaskColum";
 import { useTaskStore } from "../store/task.store";
@@ -32,23 +24,21 @@ export const ProjectBoardPage = () => {
   );
 
   useEffect(() => {
-    if (projectId){
-      fetchTasks(projectId)
+    if (projectId) {
+      fetchTasks(projectId);
     }
   }, [projectId, fetchTasks]);
 
-
-  const colums = useMemo( () => {
+  const colums = useMemo(() => {
     const filteredTasks = {
-      ToDo: optimisticTasks.filter(task => task.status === TaskStatus.ToDo),
-      InProgress: optimisticTasks.filter(task => task.status === TaskStatus.InProgress),
-      Done: optimisticTasks.filter(task => task.status === TaskStatus.Done),
-    }
+      ToDo: optimisticTasks.filter((task) => task.status === TaskStatus.ToDo),
+      InProgress: optimisticTasks.filter((task) => task.status === TaskStatus.InProgress),
+      Done: optimisticTasks.filter((task) => task.status === TaskStatus.Done),
+    };
     return filteredTasks;
   }, [optimisticTasks]);
-
   const handleDragEnd = async (event: DragEndEvent) => {
-    const {active, over} = event;
+    const { active, over } = event;
 
     if (!over) return;
 
@@ -58,18 +48,16 @@ export const ProjectBoardPage = () => {
 
     if (newStatus === oldStatus) return;
 
-    setOptimisticTasks({ taskId, newStatus });
+    startTransition(() => {
+      setOptimisticTasks({ taskId, newStatus });
+    });
 
-    await updateTask(taskId, newStatus)
-
-
-  }
-  
+    await updateTask(taskId, newStatus);
+  };
 
   if (isLoading) return <p className="text-white">Cargando tablero...</p>;
   return (
     <DndContext
-    
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full flex-col">

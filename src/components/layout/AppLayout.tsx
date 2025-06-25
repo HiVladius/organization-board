@@ -29,7 +29,7 @@ export const AppLayout = () => {
             <div className="flex flex-1 flex-col">
                 <header className=" flex h-16 flex-shrink-0 items-center justify-end border-b border-slate-700 bg-slate-800 px-6">
                     <div className="flex items-center gap-4">
-                        <span>{user?.email}</span>
+                        <span>{user?.username}</span>
                         <button
                             onClick={handleLogout}
                             className="rounded-md bg-cyan-600 px-3 py-1.5 text-sm font-semibold hover:bg-cyan-500"
