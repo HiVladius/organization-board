@@ -10,6 +10,7 @@ interface TaskStore {
   error: string | null;
   fetchTasks: (projectId: string) => Promise<void>;
   updateTask: (taskId: string, newStatus: TaskStatus) => Promise<Task>;
+  updateTaskFromWebSocket: (updateTask: Task) => void;
 }
 
 export const useTaskStore = create<TaskStore>((set) => ({
@@ -81,14 +82,26 @@ export const useTaskStore = create<TaskStore>((set) => ({
   },
   updateTask: async (taskId: string, newStatus: TaskStatus) => {
     try {
-        const updateTaskFromServer = await updateTaskStatus(taskId, newStatus);
-        set((state) => ({
-            tasks: state.tasks.map((task) => task.id === taskId ? updateTaskFromServer : task)
-        }))
-        return updateTaskFromServer;
+      const updateTaskFromServer = await updateTaskStatus(taskId, newStatus);
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.id === taskId ? updateTaskFromServer : task
+        ),
+      }));
+      return updateTaskFromServer;
     } catch (error) {
-        console.error("Fallo actualizar la tarea. La UI optimista se revertira:", error);
-        throw error;
+      console.error(
+        "Fallo actualizar la tarea. La UI optimista se revertira:",
+        error
+      );
+      throw error;
     }
   },
+
+  updateTaskFromWebSocket: (updateTask) =>
+    set((state) => ({
+      tasks: state.tasks.map((task) =>
+        task.id === updateTask.id ? updateTask : task
+      ),
+    })),
 }));

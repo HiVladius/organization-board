@@ -6,10 +6,15 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { TaskColum } from "../components/tasks/TaskColum";
 import { useTaskStore } from "../store/task.store";
 import { type Task, TaskStatus } from "../types/index.types";
+import { useWebSocket } from "../hooks/useWebSocket";
+
 
 export const ProjectBoardPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { tasks, isLoading, fetchTasks, updateTask } = useTaskStore();
+
+
+  useWebSocket(); // Inicializa el WebSocket para recibir actualizaciones en tiempo real
 
   const [optimisticTasks, setOptimisticTasks] = useOptimistic(
     tasks, // El estado "real"
@@ -55,7 +60,10 @@ export const ProjectBoardPage = () => {
     await updateTask(taskId, newStatus);
   };
 
+  //* Si isLoading es true, muestra un mensaje de carga
   if (isLoading) return <p className="text-white">Cargando tablero...</p>;
+
+
   return (
     <DndContext
       onDragEnd={handleDragEnd}
