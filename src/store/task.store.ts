@@ -52,7 +52,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
 
         // Si aún es undefined o 'undefined', generar un ID temporal
         if (!taskId || taskId === "undefined" || taskId === "null") {
-          taskId = `temp-${Date.now()}-${Math.random().toString(36)}`;
+          taskId = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
         }
 
         const mappedTask = {
@@ -101,7 +101,9 @@ export const useTaskStore = create<TaskStore>((set) => ({
   updateTaskFromWebSocket: (updateTask) =>
     set((state) => ({
       tasks: state.tasks.map((task) =>
-        task.id === updateTask.id ? updateTask : task
+        task.id === updateTask.id 
+        ? (new Date(updateTask.updated_at) > new Date(task.updated_at) ? updateTask : task) 
+        : task
       ),
     })),
 }));

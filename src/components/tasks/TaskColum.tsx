@@ -1,7 +1,4 @@
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
 
 import type { Task, TaskStatus } from "../../types/index.types";

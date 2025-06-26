@@ -1,32 +1,36 @@
-import { useEffect, useMemo, useOptimistic, startTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { DndContext } from "@dnd-kit/core";
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 
 import { TaskColum } from "../components/tasks/TaskColum";
 import { useTaskStore } from "../store/task.store";
-import { type Task, TaskStatus } from "../types/index.types";
+import { TaskStatus } from "../types/index.types";
 import { useWebSocket } from "../hooks/useWebSocket";
 
 
 export const ProjectBoardPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { tasks, isLoading, fetchTasks, updateTask } = useTaskStore();
-
+  const [localTasks, setLocalTasks] = useState(tasks);
+  const [lastUpdateTime, setLastUpdateTime] = useState(0);
 
   useWebSocket(); // Inicializa el WebSocket para recibir actualizaciones en tiempo real
 
-  const [optimisticTasks, setOptimisticTasks] = useOptimistic(
-    tasks, // El estado "real"
-    (
-      currentTasks: Task[],
-      { taskId, newStatus }: { taskId: string; newStatus: TaskStatus },
-    ) => {
-      return currentTasks.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task
-      );
-    },
-  );
+  // Sincronizar localTasks con tasks del store solo en la carga inicial
+  useEffect(() => {
+    if (tasks.length > 0 && localTasks.length === 0) {
+      setLocalTasks(tasks);
+    }
+  }, [tasks, localTasks.length]);
+
+  // Sincronizar con WebSocket updates si no hay cambios locales recientes
+  useEffect(() => {
+    const now = Date.now();
+    if (tasks.length > 0 && now - lastUpdateTime > 2000) { // 2 segundos de gracia
+      setLocalTasks(tasks);
+    }
+  }, [tasks, lastUpdateTime]);
 
   useEffect(() => {
     if (projectId) {
@@ -36,12 +40,19 @@ export const ProjectBoardPage = () => {
 
   const colums = useMemo(() => {
     const filteredTasks = {
-      ToDo: optimisticTasks.filter((task) => task.status === TaskStatus.ToDo),
-      InProgress: optimisticTasks.filter((task) => task.status === TaskStatus.InProgress),
-      Done: optimisticTasks.filter((task) => task.status === TaskStatus.Done),
+      ToDo: localTasks.filter((task) => task.status === TaskStatus.ToDo),
+      InProgress: localTasks.filter((task) => task.status === TaskStatus.InProgress),
+      Done: localTasks.filter((task) => task.status === TaskStatus.Done),
     };
     return filteredTasks;
-  }, [optimisticTasks]);
+  }, [localTasks]);
+
+
+  const handleDragStart = (event: DragStartEvent) => {
+    // Opcional: puedes agregar lógica aquí si necesitas
+  };
+
+  //! Maneja el evento de finalización del arrastre
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -53,11 +64,27 @@ export const ProjectBoardPage = () => {
 
     if (newStatus === oldStatus) return;
 
-    startTransition(() => {
-      setOptimisticTasks({ taskId, newStatus });
-    });
+    // Marcar el tiempo del último cambio local
+    setLastUpdateTime(Date.now());
 
-    await updateTask(taskId, newStatus);
+    // Actualizar inmediatamente el estado local para mantener la UI
+    setLocalTasks(currentTasks =>
+      currentTasks.map(task =>
+        task.id === taskId ? { ...task, status: newStatus } : task
+      )
+    );
+
+    try {
+      await updateTask(taskId, newStatus);
+    } catch (error) {
+      // Si falla, revertir el cambio local
+      setLocalTasks(currentTasks =>
+        currentTasks.map(task =>
+          task.id === taskId ? { ...task, status: oldStatus } : task
+        )
+      );
+      alert("No se pudo actualizar la tarea en el servidor.");
+    }
   };
 
   //* Si isLoading es true, muestra un mensaje de carga
@@ -66,6 +93,7 @@ export const ProjectBoardPage = () => {
 
   return (
     <DndContext
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full flex-col">
