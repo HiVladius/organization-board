@@ -6,13 +6,16 @@ import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { TaskColum } from "../components/tasks/TaskColum";
 import { useTaskStore } from "../store/task.store";
 import { TaskStatus } from "../types/index.types";
-// import { useWebSocket } from "../hooks/useWebSocket";
+import { useWebSocket } from "../hooks/useWebSocket";
+
 
 export const ProjectBoardPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { tasks, isLoading, error, fetchTasks, updateTask } = useTaskStore();
-  // const { isConnected, reconnectAttempts } = useWebSocket();
-
+  
+  // Conección WebSocket
+  useWebSocket();
+  
   useEffect(() => {
     if (projectId) {
       fetchTasks(projectId);
