@@ -1,8 +1,11 @@
 import axios from "axios";
 
+const urlBack = import.meta.env.VITE_API_BACK as string
+
 const apiClient = axios.create({
-  baseURL: "http://127.0.0.1:3000/api",
-  // baseURL: '/api',
+  // baseURL: "http://localhost:3000/api", //*Desarrollo
+  baseURL: urlBack, // Use the URL from the environment variable if available
+  
   headers: { "Content-Type": "application/json" },
 });
 

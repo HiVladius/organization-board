@@ -1,0 +1,36 @@
+{
+  "id": "jira-clone-env",
+  "name": "Jira Clone Environment",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "enabled": true
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "project_id",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "task_id",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "member_id",
+      "value": "",
+      "enabled": true
+    }
+  ]
+}

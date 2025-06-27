@@ -26,3 +26,7 @@ dist-ssr
 
 # Apuntes de configuración
 fetures.txt
+
+
+# Testing
+test.page.tsx

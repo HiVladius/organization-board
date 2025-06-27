@@ -85,7 +85,7 @@ export const CreateProjectForm = ({ onSucces }: CreateProjectFormProps) => {
                     htmlFor="description"
                     className="block text-sm font-medium text-slate-300"
                 >
-                    Clave del proyecto
+                    Descripción del proyecto
                 </label>
                 <textarea
                     {...register("description")}
