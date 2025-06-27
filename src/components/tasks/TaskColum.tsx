@@ -16,27 +16,11 @@ export const TaskColum = ({ title, tasks, id }: TaskColumnProps) => {
     task.id && 
     task.id !== 'undefined' && 
     task.id !== 'null' && 
-    typeof task.id === 'string' &&
-    task.id.trim() !== ''
+    typeof task.id === 'string'
   );
   
   // Crear array de IDs en el mismo orden que las tareas se renderizan
   const tasksIds = validTasks.map((task) => task.id);
-  
-  // Solo mostrar warning si hay tareas filtradas Y hay más de 0 tareas originales
-  if (tasks.length > 0 && tasks.length !== validTasks.length) {
-    console.warn(`Columna ${title}: ${tasks.length - validTasks.length} tareas con IDs inválidos fueron filtradas`, {
-      totalTasks: tasks.length,
-      validTasks: validTasks.length,
-      invalidTasks: tasks.filter(task => 
-        !task.id || 
-        task.id === 'undefined' || 
-        task.id === 'null' || 
-        typeof task.id !== 'string' ||
-        task.id.trim() === ''
-      ).map(task => ({ id: task.id, title: task.title }))
-    });
-  }
   
   // Hacer que la columna sea droppable
   const { setNodeRef } = useDroppable({

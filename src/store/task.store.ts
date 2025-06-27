@@ -51,11 +51,21 @@ export const useTaskStore = create<TaskStore>((set) => ({
     }
   },
   updateTask: async (taskId: string, newStatus: TaskStatus) => {
+    // Función helper para manejar updatingTasks
+    const updateTasksSet = (taskId: string, action: 'add' | 'remove') => {
+      set((state) => {
+        const newUpdatingTasks = new Set(state.updatingTasks);
+        if (action === 'add') {
+          newUpdatingTasks.add(taskId);
+        } else {
+          newUpdatingTasks.delete(taskId);
+        }
+        return { ...state, updatingTasks: newUpdatingTasks };
+      });
+    };
+
     // Marcar que estamos actualizando esta tarea
-    set((state) => ({
-      ...state,
-      updatingTasks: new Set([...state.updatingTasks, taskId])
-    }));
+    updateTasksSet(taskId, 'add');
     
     try {
       const rawTask = await updateTaskStatus(taskId, newStatus);
@@ -87,14 +97,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
     } catch (error) {
       console.error("❌ Store: Fallo actualizar la tarea:", error);
       // Remover de la lista de tareas siendo actualizadas en caso de error
-      set((state) => {
-        const newUpdatingTasks = new Set(state.updatingTasks);
-        newUpdatingTasks.delete(taskId);
-        return {
-          ...state,
-          updatingTasks: newUpdatingTasks
-        };
-      });
+      updateTasksSet(taskId, 'remove');
       throw error;
     }
   },

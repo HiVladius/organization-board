@@ -1,44 +1,7 @@
 import type { Task } from "../types/index.types";
 
 /**
- * Mapea un ID de MongoDB a string válido
- */
-export const mapMongoId = (mongoObject: any): string => {
-  if (!mongoObject) return "";
-  
-  let id = mongoObject.id;
-  
-  // Manejar diferentes formatos de ID de MongoDB
-  if (mongoObject._id) {
-    if (typeof mongoObject._id === "object") {
-      if (mongoObject._id.$oid) {
-        id = mongoObject._id.$oid;
-      } else if (mongoObject._id.toString) {
-        id = mongoObject._id.toString();
-      } else {
-        id = String(mongoObject._id);
-      }
-    } else if (typeof mongoObject._id === "string") {
-      id = mongoObject._id;
-    } else {
-      id = String(mongoObject._id);
-    }
-  }
-  
-  // Asegurar que siempre sea un string válido
-  id = String(id);
-  
-  // Validar que el ID no sea inválido
-  if (!id || id === "undefined" || id === "null" || id.trim() === "") {
-    console.warn("⚠️ ID inválido detectado, generando fallback");
-    return `fallback-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  }
-  
-  return id;
-};
-
-/**
- * Convierte timestamp de MongoDB a string ISO
+ * Convierte un timestamp de MongoDB a string ISO
  */
 export const convertMongoTimestamp = (timestamp: any): string => {
   if (!timestamp) return new Date().toISOString();
@@ -61,12 +24,53 @@ export const convertMongoTimestamp = (timestamp: any): string => {
 };
 
 /**
- * Normaliza una tarea de MongoDB a formato interno
+ * Mapea un ID de MongoDB a string válido
+ */
+export const mapMongoId = (task: any): string => {
+  let taskId = task.id;
+  
+  // Manejar diferentes formatos de ID de MongoDB
+  if (task._id) {
+    if (typeof task._id === "object") {
+      // Si es un objeto de MongoDB ObjectId
+      if (task._id.$oid) {
+        taskId = task._id.$oid;
+      } else if (task._id.toString) {
+        taskId = task._id.toString();
+      } else {
+        taskId = String(task._id);
+      }
+    } else if (typeof task._id === "string") {
+      taskId = task._id;
+    } else {
+      taskId = String(task._id);
+    }
+  }
+  
+  // Asegurar que siempre sea un string válido
+  taskId = String(taskId);
+  
+  // Validar que el ID no sea inválido
+  if (!taskId || taskId === "undefined" || taskId === "null" || taskId.trim() === "") {
+    console.warn("⚠️ ID de tarea inválido, generando fallback:", { 
+      originalTask: task, 
+      mappedId: taskId 
+    });
+    return `fallback-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+  
+  return taskId;
+};
+
+/**
+ * Normaliza una tarea de MongoDB a formato Task estándar
  */
 export const normalizeMongoTask = (rawTask: any): Task => {
+  const taskId = mapMongoId(rawTask);
+  
   return {
     ...rawTask,
-    id: mapMongoId(rawTask),
+    id: taskId,
     created_at: convertMongoTimestamp(rawTask.created_at),
     updated_at: convertMongoTimestamp(rawTask.updated_at),
   };
