@@ -15,7 +15,7 @@ const mapStatusToBackend = (status: TaskStatus): string => {
 };
 
 export const updateTaskStatus = async (taskId: string, status: TaskStatus): Promise<Task> => {
-    console.log('🎯 API updateTaskStatus called with:', { taskId, status });
+    
     
     // Validación básica
     if (!taskId || taskId === 'undefined' || taskId === 'null') {
@@ -25,14 +25,7 @@ export const updateTaskStatus = async (taskId: string, status: TaskStatus): Prom
     const backendStatus = mapStatusToBackend(status);
     const payload = { status: backendStatus };
     
-    console.log('📤 Sending PATCH request:', {
-        url: `/tasks/${taskId}`,
-        method: 'PATCH',
-        payload: payload,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    
     
     try {
         const response = await apiClient.patch<Task>(`/tasks/${taskId}`, payload);
