@@ -16,18 +16,19 @@ export interface Project {
     updated_at: string,
 }
 
-// export const TaskStatus = {
-//     ToDo: "ToDo",
-//     InProgress: "InProgress", 
-//     Done: "Done",
-//     Canceled: "Canceled"
-// } as const;
 
 export enum TaskStatus {
     ToDo = "ToDo",
-    InProgress = "InProgress",
+    InProgress = "InProgress",  
     Done = "Done",
-    Canceled = "Canceled"
+    Cancelled = "Cancelled"
+}
+
+export enum TaskPriority {
+    Low = "Low",
+    Medium = "Medium",
+    High = "High",
+    Urgent = "Urgent"
 }
 
 // export type TaskStatus = typeof TaskStatus[keyof typeof TaskStatus];
@@ -36,13 +37,31 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
+  project_key?: string;
   project_id: string;
   reporter_id: string;
   assignee_id?: string;
   status: TaskStatus;
-  priority: string; // Podríamos hacer un enum para esto también
+  priority: TaskPriority | string; // Permitir string para compatibilidad hacia atrás
   created_at: string;
   updated_at: string;
+}
+
+
+export interface CommentAuthor{
+    id: string,
+    username: string,
+    email: string,
+}
+
+
+export interface Comment {
+    id: string, 
+    task_id: string,
+    author: CommentAuthor,
+    content: string,
+    created_at: string,
+    updated_at: string,
 }
 
 

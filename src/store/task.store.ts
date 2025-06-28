@@ -1,18 +1,28 @@
 import { create } from "zustand";
 
-import { getTaskByProjectId } from "../api/tasks";
-import type { Task, TaskStatus } from "../types/index.types";
-import { updateTaskStatus } from "../api/updateTaskStatus";
-import { normalizeMongoTask } from "../lib/mongodb-utils";
+import {
+  getCommentsByTaskId,
+  getTaskByProjectId,
+  getTaskById,
+} from "@/api/tasks";
+import { createComment } from "@/api/comments";
+import type { Task, TaskStatus, Comment } from "@/types/index.types";
+import { updateTaskStatus } from "@/api/updateTaskStatus";
+import { normalizeMongoTask } from "@/lib/mongodb-utils";
 
 interface TaskStore {
   tasks: Task[];
+  selectedTask: Task | null; // Agregar estado para la tarea seleccionada
+  comments: Comment[]; // Agregar estado para los comentarios
   isLoading: boolean;
   error: string | null;
   updatingTasks: Set<string>; // Usar Set para mejor performance
   fetchTasks: (projectId: string) => Promise<void>;
   updateTask: (taskId: string, newStatus: TaskStatus) => Promise<Task>;
   updateTaskFromWebSocket: (updateTask: Task) => void;
+  fetchTaskById: (taskId: string) => Promise<void>;
+  clearSelectedTask: () => void;
+  addComment: (taskId: string, comment: string) => Promise<void>;
 }
 
 export const useTaskStore = create<TaskStore>((set) => ({
@@ -20,21 +30,44 @@ export const useTaskStore = create<TaskStore>((set) => ({
   isLoading: false,
   error: null,
   updatingTasks: new Set<string>(), // Inicializar Set vacío
+  selectedTask: null, // Inicializar tarea seleccionada como null
+  comments: [], // Inicializar comentarios como un array vacío
+
+  fetchTaskById: async (taskId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const task = await getTaskById(taskId);
+      const comments = await getCommentsByTaskId(taskId);
+      
+      set({ selectedTask: task, comments, isLoading: false });
+    } catch (error) {
+      set({ error: 'No se pudieron cargar los detalles de la tarea.', isLoading: false });
+    }
+  },
+
+  clearSelectedTask: () => {
+    set({ selectedTask: null, comments: [] });
+  },
+
+  addComment: async (taskId, content) => {
+    try {
+      const newComment = await createComment(taskId, content);
+      set((state) => ({
+        comments: [...state.comments, newComment],
+      }));
+    } catch (error) {
+      set({ error: "No se pudo agregar el comentario." });
+      throw error;
+    }
+  },
 
   fetchTasks: async (projectId) => {
     set({ isLoading: true, error: null });
     try {
       const rawTasks = await getTaskByProjectId(projectId);
-      
+
       // Normalizar todas las tareas usando utility
       const normalizedTasks = rawTasks.map(normalizeMongoTask);
-      
-      // Verificar que no haya IDs duplicados
-      const ids = normalizedTasks.map((t) => t.id);
-      const uniqueIds = new Set(ids);
-      if (uniqueIds.size !== ids.length) {
-        console.warn("⚠️ Se encontraron IDs duplicados en las tareas");
-      }
 
       set({ tasks: normalizedTasks, isLoading: false });
     } catch (error: any) {
@@ -52,10 +85,10 @@ export const useTaskStore = create<TaskStore>((set) => ({
   },
   updateTask: async (taskId: string, newStatus: TaskStatus) => {
     // Función helper para manejar updatingTasks
-    const updateTasksSet = (taskId: string, action: 'add' | 'remove') => {
+    const updateTasksSet = (taskId: string, action: "add" | "remove") => {
       set((state) => {
         const newUpdatingTasks = new Set(state.updatingTasks);
-        if (action === 'add') {
+        if (action === "add") {
           newUpdatingTasks.add(taskId);
         } else {
           newUpdatingTasks.delete(taskId);
@@ -64,40 +97,41 @@ export const useTaskStore = create<TaskStore>((set) => ({
       });
     };
 
-    // Marcar que estamos actualizando esta tarea
-    updateTasksSet(taskId, 'add');
-    
+    //* Marcar que estamos actualizando esta tarea
+    updateTasksSet(taskId, "add");
+
     try {
       const rawTask = await updateTaskStatus(taskId, newStatus);
       const normalizedTask = normalizeMongoTask(rawTask);
-      
+
       set((state) => {
-        const taskExists = state.tasks.some(task => task.id === normalizedTask.id);
+        const taskExists = state.tasks.some(
+          (task) => task.id === normalizedTask.id
+        );
         const newUpdatingTasks = new Set(state.updatingTasks);
         newUpdatingTasks.delete(taskId);
-        
+
         if (!taskExists) {
           return {
             ...state,
             tasks: [...state.tasks, normalizedTask],
-            updatingTasks: newUpdatingTasks
+            updatingTasks: newUpdatingTasks,
           };
         }
-        
+
         return {
           ...state,
           tasks: state.tasks.map((task) =>
             task.id === normalizedTask.id ? normalizedTask : task
           ),
-          updatingTasks: newUpdatingTasks
+          updatingTasks: newUpdatingTasks,
         };
       });
-      
+
       return normalizedTask;
     } catch (error) {
-      console.error("❌ Store: Fallo actualizar la tarea:", error);
       // Remover de la lista de tareas siendo actualizadas en caso de error
-      updateTasksSet(taskId, 'remove');
+      updateTasksSet(taskId, "remove");
       throw error;
     }
   },
@@ -108,23 +142,25 @@ export const useTaskStore = create<TaskStore>((set) => ({
       if (state.updatingTasks.has(updateTask.id)) {
         return state; // No cambiar el estado
       }
-      
-      const taskIndex = state.tasks.findIndex(task => task.id === updateTask.id);
-      
+
+      const taskIndex = state.tasks.findIndex(
+        (task) => task.id === updateTask.id
+      );
+
       if (taskIndex === -1) {
         // Tarea no encontrada, agregarla
         return {
           ...state,
-          tasks: [...state.tasks, updateTask]
+          tasks: [...state.tasks, updateTask],
         };
       }
-      
+
       // Actualizar tarea existente
       return {
         ...state,
         tasks: state.tasks.map((task) =>
           task.id === updateTask.id ? updateTask : task
-        )
+        ),
       };
     });
   },

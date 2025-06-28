@@ -1,5 +1,5 @@
 import apiClient from "./index.api";
-import type { Task } from "../types/index.types";
+import type { Task, Comment } from "../types/index.types";
 
 export const getTaskByProjectId = async(projectId: string): Promise<Task[]> => {
     if (!projectId || projectId === 'undefined' || projectId === '[object Object]') {
@@ -8,9 +8,17 @@ export const getTaskByProjectId = async(projectId: string): Promise<Task[]> => {
     
     // Asegurar que el projectId sea un string válido
     const cleanProjectId = String(projectId).trim();
-    console.log('Making API request to:', `/projects/${cleanProjectId}/tasks`);
-    console.log('ProjectId type:', typeof cleanProjectId, 'Value:', cleanProjectId);
     
     const response = await apiClient.get(`/projects/${cleanProjectId}/tasks`);
+    return response.data;
+}
+
+export const getTaskById = async(taskId: string):Promise<Task> => {
+    const response = await apiClient.get<Task>(`/tasks/${taskId}`)
+    return response.data;
+}
+
+export const getCommentsByTaskId = async(taskId: string):Promise<Comment[]> => {
+    const response = await apiClient.get<Comment[]>(`/tasks/${taskId}/comments`);
     return response.data;
 }
