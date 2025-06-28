@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import {
-  getProjects,
   createProject,
   type CreateProjectPayload,
+  getProjects,
 } from "../api/projects";
 import type { Project } from "../types/index.types";
 
@@ -60,7 +60,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
           "Mapped ID:",
           mappedProject.id,
           "Type:",
-          typeof mappedProject.id
+          typeof mappedProject.id,
         );
         return mappedProject;
       });

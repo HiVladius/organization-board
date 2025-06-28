@@ -3,17 +3,22 @@ import type { ReactNode } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
 interface ModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    title: string;
-    children: ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
 }
 
 export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
-    return (
-      <Transition appear show={isOpen} as={Fragment}>
+  return (
+    <Transition appear show={isOpen} as={Fragment}>
       {/* El componente Dialog ahora recibe 'open' y 'onClose' directamente */}
-      <Dialog as="div" className="relative z-10" open={isOpen} onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        open={isOpen}
+        onClose={onClose}
+      >
         {/* El fondo oscuro (overlay) */}
         <Transition
           as={Fragment}
@@ -32,7 +37,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <Transition
               as={Fragment}
-                show={isOpen}
+              show={isOpen}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
@@ -46,7 +51,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
                 <h3 className="text-lg font-medium leading-6 text-white">
                   {title}
                 </h3>
-                
+
                 <div className="mt-4">
                   {children}
                 </div>
@@ -56,5 +61,5 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         </div>
       </Dialog>
     </Transition>
-    );
+  );
 };

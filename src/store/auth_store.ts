@@ -37,24 +37,24 @@ export const useAuthStore = create<AuthState>()(
 
       // Acción de Login
       login: async (credentials) => {
-        const response = await apiClient.post('/auth/login', credentials);
+        const response = await apiClient.post("/auth/login", credentials);
         const { user, token } = response.data;
-        
+
         // Guardamos el token en localStorage para el interceptor de Axios
-        localStorage.setItem('authToken', token);
-        
+        localStorage.setItem("authToken", token);
+
         // Actualizamos el estado de la aplicación
         set({ user, token, isAuthenticated: true });
       },
 
       // Acción de Logout
       logout: () => {
-        localStorage.removeItem('authToken');
+        localStorage.removeItem("authToken");
         set({ user: null, token: null, isAuthenticated: false });
       },
     }),
     {
-      name: 'auth-storage', // Nombre de la clave en localStorage
-    }
-  )
+      name: "auth-storage", // Nombre de la clave en localStorage
+    },
+  ),
 );

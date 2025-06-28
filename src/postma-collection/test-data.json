@@ -6,7 +6,7 @@
       "password": "password123"
     },
     {
-      "name": "Jane Smith", 
+      "name": "Jane Smith",
       "email": "jane@example.com",
       "password": "password456"
     }
@@ -27,20 +27,20 @@
     {
       "title": "Setup Database Schema",
       "description": "Create the initial database schema for the project",
-      "status": "todo",
-      "priority": "high"
+      "status": "ToDo",
+      "priority": "High"
     },
     {
       "title": "Implement User Authentication",
       "description": "Add JWT-based authentication system",
-      "status": "in_progress", 
-      "priority": "high"
+      "status": "InProgress",
+      "priority": "High"
     },
     {
       "title": "Create API Documentation",
       "description": "Document all API endpoints using OpenAPI",
-      "status": "todo",
-      "priority": "medium"
+      "status": "ToDo",
+      "priority": "Medium"
     }
   ],
   "comments": [

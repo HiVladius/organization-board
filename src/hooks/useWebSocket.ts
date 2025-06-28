@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useTaskStore } from "../store/task.store";
 import { normalizeMongoTask } from "../lib/mongodb-utils";
 
@@ -32,7 +32,10 @@ export const useWebSocket = () => {
 
       socket.onclose = (event) => {
         // Intentar reconectar si no fue un cierre intencional
-        if (event.code !== 1000 && reconnectAttempts.current < maxReconnectAttempts) {
+        if (
+          event.code !== 1000 &&
+          reconnectAttempts.current < maxReconnectAttempts
+        ) {
           reconnectAttempts.current++;
           setTimeout(connectWebSocket, 3000 * reconnectAttempts.current);
         }
@@ -45,13 +48,19 @@ export const useWebSocket = () => {
           if (message.event_type === "TASK_UPDATED") {
             // Usar la utilidad de normalización
             const normalizedTask = normalizeMongoTask(message.task);
-            
+
             // Validar que la tarea tenga campos requeridos
-            if (!normalizedTask.title || !normalizedTask.status || !normalizedTask.project_id) {
-              console.warn("⚠️ WebSocket: Tarea con campos faltantes ignorada:", normalizedTask);
+            if (
+              !normalizedTask.title || !normalizedTask.status ||
+              !normalizedTask.project_id
+            ) {
+              console.warn(
+                "⚠️ WebSocket: Tarea con campos faltantes ignorada:",
+                normalizedTask,
+              );
               return;
             }
-            
+
             updateTaskFromWebSocket(normalizedTask);
           }
         } catch (error) {
@@ -62,7 +71,6 @@ export const useWebSocket = () => {
       socket.onerror = () => {
         console.error("❌ WebSocket: Error de conexión");
       };
-
     } catch (error) {
       console.error("❌ WebSocket: Error al conectar:", error);
     }
@@ -80,6 +88,6 @@ export const useWebSocket = () => {
 
   return {
     isConnected: ws.current?.readyState === WebSocket.OPEN,
-    reconnectAttempts: reconnectAttempts.current
+    reconnectAttempts: reconnectAttempts.current,
   };
 };
