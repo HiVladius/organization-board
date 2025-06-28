@@ -1,42 +1,40 @@
 import { useTaskStore } from "@/store/task.store";
-import { CreateCommentForm } from './CreateCommentForm';
-
-
+import { CreateCommentForm } from "./CreateCommentForm";
 
 export const TaskDetails = () => {
-const {selectedTask, comments, isLoading} = useTaskStore()
+  const { selectedTask, comments, isLoadingTaskDetails } = useTaskStore();
 
-if(isLoading || !selectedTask){
-    return <p className="text-center text-slate-400"> Cargando detalles...</p>
-}
+  if (isLoadingTaskDetails || !selectedTask) {
+    return <p className="text-center text-slate-400">Cargando detalles...</p>;
+  }
 
-
-return (
+  return (
     <div className="text-white">
-        <p className="text-sm text-slate-400">{selectedTask.project_key}-ID</p>
-        <h2 className="text-2xl font-bold">{selectedTask.title}</h2>
+      <p className="text-sm text-slate-400">{selectedTask.project_key}-ID</p>
+      <h2 className="text-2xl font-bold">{selectedTask.title}</h2>
 
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold">Description</h3>
+        <p className="mt-1 text-slate-300">
+          {selectedTask.description || "No hay descipción para esta tarea."}
+        </p>
+      </div>
 
-        <div className="mt-4">
-            <h3 className="text-lg font-semibold">Description</h3>
-            <p className="mt-1 text-slate-300">{selectedTask.description || "No hay descipción para esta tarea."}</p>
-
-        </div>
-
-        <div className="mt-6">
-            <h3 className="text-lg font-semibold ">Comentarios</h3>
-            <div className="mt-2 space-y-3">
-                 {comments.map((coment) => (
-                    <div key={coment.id} className="p-3 bg-slate-800 rounded-md">
-                        <p className="text-sm text-slate-400">{coment.author.username}</p>
-                        <p className="mt-1 text-slate-300">{coment.content}</p>
-                    </div>
-                 ))}   
-                 {comments.length === 0  && <p className="text-sm text-slate-400">Aun no hay comentarios</p>}
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold ">Comentarios</h3>
+        <div className="mt-2 space-y-3">
+          {comments.map((coment) => (
+            <div key={coment.id} className="p-3 bg-slate-800 rounded-md">
+              <p className="text-sm text-slate-400">{coment.author.username}</p>
+              <p className="mt-1 text-slate-300">{coment.content}</p>
             </div>
-            <CreateCommentForm taskId={selectedTask.id}/>
+          ))}
+          {comments.length === 0 && (
+            <p className="text-sm text-slate-400">Aun no hay comentarios</p>
+          )}
         </div>
-
+        <CreateCommentForm taskId={selectedTask.id} />
+      </div>
     </div>
-  )
-}
+  );
+};

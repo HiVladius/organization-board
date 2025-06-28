@@ -16,8 +16,6 @@ export const ProjectPage = () => {
     fetchProjects();
   }, [fetchProjects]);
 
-  
-
   return (
     <>
       <div>
@@ -25,7 +23,8 @@ export const ProjectPage = () => {
           <div>
             <h1 className="text-3xl font-bold text-white">Proyectos</h1>
             <p className="mt-1 text-slate-400">
-              Aquí estan tus proyectos <strong>{user?.username || "Usuario"}.</strong>
+              Aquí estan tus proyectos{" "}
+              <strong>{user?.username || "Usuario"}.</strong>
             </p>
           </div>
           <button

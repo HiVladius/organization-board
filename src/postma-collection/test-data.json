@@ -6,7 +6,7 @@
       "password": "password123"
     },
     {
-      "name": "Jane Smith", 
+      "name": "Jane Smith",
       "email": "jane@example.com",
       "password": "password456"
     }
@@ -33,7 +33,7 @@
     {
       "title": "Implement User Authentication",
       "description": "Add JWT-based authentication system",
-      "status": "InProgress", 
+      "status": "InProgress",
       "priority": "High"
     },
     {

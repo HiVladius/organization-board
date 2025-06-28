@@ -19,13 +19,11 @@ export const createProjectSchema = z.object({
   description: z.string().optional(),
 });
 
-
 export const createCommentSchema = z.object({
-    content: z
-        .string()
-        .min(1, { message: "El comentario debe de tener al menos 1 caracteres" })
-
-})
+  content: z
+    .string()
+    .min(1, { message: "El comentario debe de tener al menos 1 caracteres" }),
+});
 
 export type TLoginSchema = z.infer<typeof loginSchema>;
 export type TCreateProjectSchema = z.infer<typeof createProjectSchema>;

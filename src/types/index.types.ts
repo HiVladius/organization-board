@@ -1,34 +1,33 @@
 export interface User {
-    id: string,
-    username: string,
-    email: string,
+  id: string;
+  username: string;
+  email: string;
 }
 
 export interface Project {
-    id: string,
-    _id?: string, // MongoDB ID (opcional para compatibilidad)
-    name: string,
-    project_key: string,
-    description: string,
-    owner_id: string,
-    members: string[],
-    created_at: string,
-    updated_at: string,
+  id: string;
+  _id?: string; // MongoDB ID (opcional para compatibilidad)
+  name: string;
+  project_key: string;
+  description: string;
+  owner_id: string;
+  members: string[];
+  created_at: string;
+  updated_at: string;
 }
 
-
 export enum TaskStatus {
-    ToDo = "ToDo",
-    InProgress = "InProgress",  
-    Done = "Done",
-    Cancelled = "Cancelled"
+  ToDo = "ToDo",
+  InProgress = "InProgress",
+  Done = "Done",
+  Cancelled = "Cancelled",
 }
 
 export enum TaskPriority {
-    Low = "Low",
-    Medium = "Medium",
-    High = "High",
-    Urgent = "Urgent"
+  Low = "Low",
+  Medium = "Medium",
+  High = "High",
+  Urgent = "Urgent",
 }
 
 // export type TaskStatus = typeof TaskStatus[keyof typeof TaskStatus];
@@ -47,22 +46,19 @@ export interface Task {
   updated_at: string;
 }
 
-
-export interface CommentAuthor{
-    id: string,
-    username: string,
-    email: string,
+export interface CommentAuthor {
+  id: string;
+  username: string;
+  email: string;
 }
-
 
 export interface Comment {
-    id: string, 
-    task_id: string,
-    author: CommentAuthor,
-    content: string,
-    created_at: string,
-    updated_at: string,
+  id: string;
+  task_id: string;
+  author: CommentAuthor;
+  content: string;
+  created_at: string;
+  updated_at: string;
 }
-
 
 export {};

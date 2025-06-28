@@ -3,14 +3,11 @@ import { useAuthStore } from "../store/auth_store";
 import { AppLayout } from "../components/layout/AppLayout";
 
 export const ProtectedRoute = () => {
-    const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-    return (      
-            
-        <AppLayout />
-    );
+  return <AppLayout />;
 };

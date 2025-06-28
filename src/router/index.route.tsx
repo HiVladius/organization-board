@@ -6,26 +6,26 @@ import { ProjectBoardPage } from "../pages/ProjectBoardPage";
 // import { Testpage } from "../pages/test.page";
 
 export const router = createBrowserRouter([
-    {
-        path: "/login",
-        element: <LoginPages />,
-    },
-    {
-        path: "/",
-        element: <ProtectedRoute />,
-        children: [
-            {
-                index: true,
-                element: <ProjectPage />,
-            },
-            {
-                path: "/project/:projectId",
-                element: <ProjectBoardPage />,
-            },
-            // {
-            //     path: "/test",
-            //     element: <Testpage />,
-            // },
-        ],
-    },
+  {
+    path: "/login",
+    element: <LoginPages />,
+  },
+  {
+    path: "/",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <ProjectPage />,
+      },
+      {
+        path: "/project/:projectId",
+        element: <ProjectBoardPage />,
+      },
+      // {
+      //     path: "/test",
+      //     element: <Testpage />,
+      // },
+    ],
+  },
 ]);

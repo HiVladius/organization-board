@@ -2,11 +2,11 @@ import { create } from "zustand";
 
 import {
   getCommentsByTaskId,
-  getTaskByProjectId,
   getTaskById,
+  getTaskByProjectId,
 } from "@/api/tasks";
 import { createComment } from "@/api/comments";
-import type { Task, TaskStatus, Comment } from "@/types/index.types";
+import type { Comment, Task, TaskStatus } from "@/types/index.types";
 import { updateTaskStatus } from "@/api/updateTaskStatus";
 import { normalizeMongoTask } from "@/lib/mongodb-utils";
 
@@ -14,7 +14,8 @@ interface TaskStore {
   tasks: Task[];
   selectedTask: Task | null; // Agregar estado para la tarea seleccionada
   comments: Comment[]; // Agregar estado para los comentarios
-  isLoading: boolean;
+  isLoading: boolean; // Para cargar la lista de tareas
+  isLoadingTaskDetails: boolean; // Para cargar los detalles de una tarea específica
   error: string | null;
   updatingTasks: Set<string>; // Usar Set para mejor performance
   fetchTasks: (projectId: string) => Promise<void>;
@@ -28,20 +29,27 @@ interface TaskStore {
 export const useTaskStore = create<TaskStore>((set) => ({
   tasks: [],
   isLoading: false,
+  isLoadingTaskDetails: false,
   error: null,
   updatingTasks: new Set<string>(), // Inicializar Set vacío
   selectedTask: null, // Inicializar tarea seleccionada como null
   comments: [], // Inicializar comentarios como un array vacío
 
   fetchTaskById: async (taskId) => {
-    set({ isLoading: true, error: null });
+    set({ isLoadingTaskDetails: true, error: null });
     try {
-      const task = await getTaskById(taskId);
+      const rawTask = await getTaskById(taskId);
       const comments = await getCommentsByTaskId(taskId);
-      
-      set({ selectedTask: task, comments, isLoading: false });
+
+      // Normalizar la tarea usando utility
+      const normalizedTask = normalizeMongoTask(rawTask);
+
+      set({ selectedTask: normalizedTask, comments, isLoadingTaskDetails: false });
     } catch (error) {
-      set({ error: 'No se pudieron cargar los detalles de la tarea.', isLoading: false });
+      set({
+        error: "No se pudieron cargar los detalles de la tarea.",
+        isLoadingTaskDetails: false,
+      });
     }
   },
 
@@ -106,7 +114,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
 
       set((state) => {
         const taskExists = state.tasks.some(
-          (task) => task.id === normalizedTask.id
+          (task) => task.id === normalizedTask.id,
         );
         const newUpdatingTasks = new Set(state.updatingTasks);
         newUpdatingTasks.delete(taskId);
@@ -144,7 +152,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
       }
 
       const taskIndex = state.tasks.findIndex(
-        (task) => task.id === updateTask.id
+        (task) => task.id === updateTask.id,
       );
 
       if (taskIndex === -1) {
