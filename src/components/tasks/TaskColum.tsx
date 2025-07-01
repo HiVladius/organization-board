@@ -44,7 +44,9 @@ export const TaskColum = (
     >
       <h3 className="px-1 text-sm font-semibold text-slate-300">{title}</h3>
       <div
-        className={`mt-3 flex flex-col gap-3 transition-all duration-200 min-h-[350px] ${isOver ? "transform scale-[0.98]" : ""}`}
+        className={`mt-3 flex flex-col gap-3 transition-all duration-200 min-h-[350px] ${
+          isOver ? "transform scale-[0.98]" : ""
+        }`}
       >
         {validTasks.length > 0
           ? (

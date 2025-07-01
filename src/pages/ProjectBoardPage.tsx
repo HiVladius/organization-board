@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   DndContext,
   DragOverlay,
@@ -19,6 +19,8 @@ import type { Task } from "@/types/index.types";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { Modal } from "@/components/ui/Modal";
 import { TaskDetails } from "@/components/tasks/TaskDetails";
+import { Sidebar } from "@/components/ui/Sidebar";
+import { ProjectSettings } from "@/components/ProjectSettings";
 
 export const ProjectBoardPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -32,6 +34,7 @@ export const ProjectBoardPage = () => {
     clearSelectedTask,
   } = useTaskStore();
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [isSettingsSidebarOpen, setSettingsSidebarOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   // Configurar sensores con restricciones de activación
@@ -62,15 +65,13 @@ export const ProjectBoardPage = () => {
   }, [projectId, fetchTasks]);
 
   const columns = useMemo(() => {
-    
-    
     const result = {
       ToDo: tasks.filter((task) => task.status === TaskStatus.ToDo),
       InProgress: tasks.filter((task) => task.status === TaskStatus.InProgress),
       Done: tasks.filter((task) => task.status === TaskStatus.Done),
       Cancelled: tasks.filter((task) => task.status === TaskStatus.Cancelled),
     };
-    
+
     return result;
   }, [tasks]);
 
@@ -153,12 +154,25 @@ export const ProjectBoardPage = () => {
         <div className="flex h-full flex-col">
           <div className="mb-4 flex items-center justify-between">
             <h1 className="text-2xl font-bold text-white">Tablero Kanban</h1>
-            <Link
-              to={`/project/${projectId}/settings`}
-              className="rounded-md bg-slate-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-600"
+            <button
+              onClick={() => setSettingsSidebarOpen(true)}
+              className="flex items-center gap-2 rounded-md bg-slate-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-600 transition-colors duration-200"
             >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
+                />
+              </svg>
               Ajustes del Proyecto
-            </Link>
+            </button>
           </div>
 
           <div className="flex flex-1 gap-6 overflow-x-auto">
@@ -206,6 +220,18 @@ export const ProjectBoardPage = () => {
       >
         <TaskDetails />
       </Modal>
+
+      <Sidebar
+        isOpen={isSettingsSidebarOpen}
+        onClose={() => setSettingsSidebarOpen(false)}
+        title="Configuración del Proyecto"
+        position="right"
+      >
+        <ProjectSettings
+          projectId={projectId!}
+          onClose={() => setSettingsSidebarOpen(false)}
+        />
+      </Sidebar>
     </>
   );
 };

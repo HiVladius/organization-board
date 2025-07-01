@@ -7,8 +7,8 @@ import {
 
 import type { Project, User } from "@/types/index.types";
 import {
-  getProjectsMembers,
   addProjectMember,
+  getProjectsMembers,
   removeProjectMember,
 } from "@/api/members";
 import { normalizeId } from "@/helpers/normalizedId";
@@ -35,11 +35,11 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
   fetchProjectById: async (projectId: string) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       // Primero intentar encontrar el proyecto en el estado local
       let project = get().projects.find((p) => p.id === projectId);
-      
+
       // Si no se encuentra localmente, cargar todos los proyectos
       if (!project) {
         const rawProjects = await getProjects();
@@ -64,24 +64,44 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
             } else {
               normalizedProjectId = String(p._id);
             }
+          }        // Asegurar que siempre sea un string
+        normalizedProjectId = String(normalizedProjectId);        // Normalizar también el owner_id
+        let normalizedOwnerId = p.owner_id;
+        if (p.owner_id) {
+          if (typeof p.owner_id === "object") {
+            if (p.owner_id.$oid) {
+              normalizedOwnerId = p.owner_id.$oid;
+            } else if (p.owner_id.toString) {
+              normalizedOwnerId = p.owner_id.toString();
+            } else {
+              normalizedOwnerId = String(p.owner_id);
+            }
+          } else {
+            normalizedOwnerId = String(p.owner_id);
           }
+        }
 
-          // Asegurar que siempre sea un string
-          normalizedProjectId = String(normalizedProjectId);
+        // Normalizar los IDs de miembros si existen
+        let normalizedMembers = p.members;
+        if (Array.isArray(p.members)) {
+          normalizedMembers = p.members.map((memberId: any) => normalizeId(memberId));
+        }
 
-          return {
-            ...p,
-            id: normalizedProjectId,
-          };
-        });
+        return {
+          ...p,
+          id: normalizedProjectId,
+          owner_id: normalizedOwnerId,
+          members: normalizedMembers,
+        };
+      });
 
-        // Actualizar el estado con todos los proyectos
-        set({ projects: projectsWithId });
-        
+      // Actualizar el estado con todos los proyectos
+      set({ projects: projectsWithId });
+
         // Buscar el proyecto específico en la lista actualizada
         project = projectsWithId.find((p) => p.id === projectId);
       }
-      
+
       set({ selectedProject: project || null, isLoading: false });
     } catch (error) {
       console.error("Fallo al obtener el proyecto:", error);
@@ -98,11 +118,19 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
     try {
       const rawMembers = await getProjectsMembers(projectId);
-      const membersWithId = rawMembers.map((members) => ({
-        ...members,
-        id: normalizeId(members), // Normalizar el ID de MongoDB
-      }));
+      console.log("Raw members from API:", rawMembers);
+      
+      const membersWithId = rawMembers.map((member) => {
+        const normalizedMember = {
+          ...member,
+          id: normalizeId(member), // Normalizar el ID de MongoDB
+        };
+        
+        console.log("Original member:", member, "Normalized member:", normalizedMember);
+        return normalizedMember;
+      });
 
+      console.log("All normalized members:", membersWithId);
       set({ members: membersWithId, isLoading: false });
     } catch (error) {
       console.error("Fallo al obtener los miembros del proyecto:", error);
@@ -166,9 +194,44 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         // Asegurar que siempre sea un string
         projectId = String(projectId);
 
+        // Normalizar también el owner_id
+        let normalizedOwnerId = p.owner_id;
+        if (p.owner_id) {
+          if (typeof p.owner_id === "object") {
+            if (p.owner_id.$oid) {
+              normalizedOwnerId = p.owner_id.$oid;
+            } else if (p.owner_id.toString) {
+              normalizedOwnerId = p.owner_id.toString();
+            } else {
+              normalizedOwnerId = String(p.owner_id);
+            }
+          } else {
+            normalizedOwnerId = String(p.owner_id);
+          }
+        }
+
+        // Normalizar los IDs de miembros si existen
+        let normalizedMembers = p.members;
+        if (Array.isArray(p.members)) {
+          normalizedMembers = p.members.map((memberId: any) => {
+            if (typeof memberId === "object") {
+              if (memberId.$oid) {
+                return memberId.$oid;
+              } else if (memberId.toString) {
+                return memberId.toString();
+              } else {
+                return String(memberId);
+              }
+            }
+            return String(memberId);
+          });
+        }
+
         const mappedProject = {
           ...p,
           id: projectId,
+          owner_id: normalizedOwnerId,
+          members: normalizedMembers,
         };
 
         console.log(
@@ -177,7 +240,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
           "Mapped ID:",
           mappedProject.id,
           "Type:",
-          typeof mappedProject.id
+          typeof mappedProject.id,
         );
         return mappedProject;
       });
@@ -211,9 +274,45 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         }
       }
 
+      // Normalizar también el owner_id del nuevo proyecto
+      let normalizedOwnerId = (newProject as any).owner_id;
+      if ((newProject as any).owner_id) {
+        const ownerId = (newProject as any).owner_id;
+        if (typeof ownerId === "object") {
+          if (ownerId.$oid) {
+            normalizedOwnerId = ownerId.$oid;
+          } else if (ownerId.toString) {
+            normalizedOwnerId = ownerId.toString();
+          } else {
+            normalizedOwnerId = String(ownerId);
+          }
+        } else {
+          normalizedOwnerId = String(ownerId);
+        }
+      }
+
+      // Normalizar los IDs de miembros si existen
+      let normalizedMembers = (newProject as any).members;
+      if (Array.isArray((newProject as any).members)) {
+        normalizedMembers = (newProject as any).members.map((memberId: any) => {
+          if (typeof memberId === "object") {
+            if (memberId.$oid) {
+              return memberId.$oid;
+            } else if (memberId.toString) {
+              return memberId.toString();
+            } else {
+              return String(memberId);
+            }
+          }
+          return String(memberId);
+        });
+      }
+
       const projectWithId = {
         ...newProject,
         id: projectId,
+        owner_id: normalizedOwnerId,
+        members: normalizedMembers,
       };
 
       console.log("Mapped new project ID:", projectWithId.id);
