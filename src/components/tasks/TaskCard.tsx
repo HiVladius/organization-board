@@ -1,3 +1,4 @@
+import { useTaskStore } from "@/store/task.store";
 import type { Task } from "../../types/index.types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -19,6 +20,8 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
     id: task.id,
   });
 
+  const { deleteTask } = useTaskStore();
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || "transform 200ms ease-in-out",
@@ -29,6 +32,13 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
   const handleCardClick = () => {
     if (onTaskClick) {
       onTaskClick(task.id);
+    }
+  };
+
+  const handleDeleteTask = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que el click se propague al contenedor del card
+    if (window.confirm("¿Estas seguro de eliminar la tarea?")) {
+      deleteTask(task.id);
     }
   };
 
@@ -43,10 +53,9 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
       }`}
       onClick={handleCardClick}
     >
-      {
-        /* Drag Handle - Con activationConstraint configurado en los sensores,
-                este handle solo activará el drag después de 10px de movimiento */
-      }
+      
+      
+
       <div
         {...listeners}
         {...attributes}
@@ -72,6 +81,14 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
 
       {/* Contenido de la tarjeta - Clickeable para abrir detalles */}
       <div className="select-none pl-2 transition-all duration-200">
+
+         <button
+        onClick={handleDeleteTask}
+        className="absolute right-1 top-1 z-10 hidden h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-700 hover:text-white group-hover:flex"
+      >
+        &times;
+      </button>
+
         <h4 className="text-sm font-medium text-slate-200 transition-colors duration-200 group-hover:text-white">
           {task.title}
         </h4>

@@ -4,18 +4,20 @@ import {
 } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
 
-import type { Task, TaskStatus } from "../../types/index.types";
+import type { Task, TaskStatus } from "@/types/index.types";
 import { TaskCard } from "./TaskCard";
+import { AddTaskForm } from "./AddTaskForm";
 
 interface TaskColumnProps {
   id: TaskStatus;
   title: string;
   tasks: Task[];
+  projectId: string;
   onTaskClick?: (taskId: string) => void;
 }
 
 export const TaskColum = (
-  { title, tasks, id, onTaskClick }: TaskColumnProps,
+  { title, tasks, id, projectId, onTaskClick }: TaskColumnProps,
 ) => {
   // Filtrar tareas con IDs válidos
   const validTasks = tasks.filter((task) =>
@@ -42,9 +44,7 @@ export const TaskColum = (
     >
       <h3 className="px-1 text-sm font-semibold text-slate-300">{title}</h3>
       <div
-        className={`mt-3 flex flex-col gap-3 transition-all duration-200 min-h-[350px] ${
-          isOver ? "transform scale-[0.98]" : ""
-        }`}
+        className={`mt-3 flex flex-col gap-3 transition-all duration-200 min-h-[350px] ${isOver ? "transform scale-[0.98]" : ""}`}
       >
         {validTasks.length > 0
           ? (
@@ -91,6 +91,7 @@ export const TaskColum = (
             )}
         </div>
       </div>
+      <AddTaskForm projectId={projectId} status={id} />
     </div>
   );
 };

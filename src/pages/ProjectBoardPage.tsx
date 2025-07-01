@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   DndContext,
   DragOverlay,
@@ -62,12 +62,16 @@ export const ProjectBoardPage = () => {
   }, [projectId, fetchTasks]);
 
   const columns = useMemo(() => {
-    return {
+    
+    
+    const result = {
       ToDo: tasks.filter((task) => task.status === TaskStatus.ToDo),
       InProgress: tasks.filter((task) => task.status === TaskStatus.InProgress),
       Done: tasks.filter((task) => task.status === TaskStatus.Done),
       Cancelled: tasks.filter((task) => task.status === TaskStatus.Cancelled),
     };
+    
+    return result;
   }, [tasks]);
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -149,6 +153,12 @@ export const ProjectBoardPage = () => {
         <div className="flex h-full flex-col">
           <div className="mb-4 flex items-center justify-between">
             <h1 className="text-2xl font-bold text-white">Tablero Kanban</h1>
+            <Link
+              to={`/project/${projectId}/settings`}
+              className="rounded-md bg-slate-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-600"
+            >
+              Ajustes del Proyecto
+            </Link>
           </div>
 
           <div className="flex flex-1 gap-6 overflow-x-auto">
@@ -156,24 +166,28 @@ export const ProjectBoardPage = () => {
               title="Por Hacer"
               tasks={columns.ToDo}
               id={TaskStatus.ToDo}
+              projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
             />
             <TaskColum
               title="En Progreso"
               tasks={columns.InProgress}
               id={TaskStatus.InProgress}
+              projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
             />
             <TaskColum
               title="Completadas"
               tasks={columns.Done}
               id={TaskStatus.Done}
+              projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
             />
             <TaskColum
               title="Canceladas"
               tasks={columns.Cancelled}
               id={TaskStatus.Cancelled}
+              projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
             />
           </div>

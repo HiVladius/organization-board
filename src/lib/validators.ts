@@ -25,6 +25,12 @@ export const createCommentSchema = z.object({
     .min(1, { message: "El comentario debe de tener al menos 1 caracteres" }),
 });
 
+export const addMemberSchema = z.object({
+  email: z.string().email({message: "Direccion de correo invalido"}),
+})
+
+
 export type TLoginSchema = z.infer<typeof loginSchema>;
 export type TCreateProjectSchema = z.infer<typeof createProjectSchema>;
 export type TCreateCommentSchema = z.infer<typeof createCommentSchema>;
+export type TAddMemberSchema = z.infer<typeof addMemberSchema>;

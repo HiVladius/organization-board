@@ -9,6 +9,8 @@ import { createComment } from "@/api/comments";
 import type { Comment, Task, TaskStatus } from "@/types/index.types";
 import { updateTaskStatus } from "@/api/updateTaskStatus";
 import { normalizeMongoTask } from "@/lib/mongodb-utils";
+import { createTask } from "@/api/tasks";
+import { deleteTask } from "../api/tasks";
 
 interface TaskStore {
   tasks: Task[];
@@ -24,9 +26,15 @@ interface TaskStore {
   fetchTaskById: (taskId: string) => Promise<void>;
   clearSelectedTask: () => void;
   addComment: (taskId: string, comment: string) => Promise<void>;
+  createTask: (
+    projectId: string,
+    title: string,
+    status?: string
+  ) => Promise<void>;
+  deleteTask: (taskId: string) => Promise<void>;
 }
 
-export const useTaskStore = create<TaskStore>((set) => ({
+export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
   isLoading: false,
   isLoadingTaskDetails: false,
@@ -34,6 +42,36 @@ export const useTaskStore = create<TaskStore>((set) => ({
   updatingTasks: new Set<string>(), // Inicializar Set vacío
   selectedTask: null, // Inicializar tarea seleccionada como null
   comments: [], // Inicializar comentarios como un array vacío
+
+  createTask: async (projectId, title, status = "ToDo") => {
+    try {
+      const rawTask = await createTask(projectId, title, status);
+
+      // Normalizar la tarea usando utility
+      const normalizedTask = normalizeMongoTask(rawTask);
+
+      set((state) => ({
+        tasks: [...state.tasks, normalizedTask],
+      }));
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteTask: async (taskId) => {
+    const originalTasks = get().tasks;
+    set((state) => ({
+      tasks: state.tasks.filter((task) => task.id !== taskId),
+    }));
+
+    try {
+      await deleteTask(taskId);
+    } catch (error) {
+      throw error;
+
+      set({ tasks: originalTasks, error: "No se pudo eliminar la tarea." });
+    }
+  },
 
   fetchTaskById: async (taskId) => {
     set({ isLoadingTaskDetails: true, error: null });
@@ -44,7 +82,11 @@ export const useTaskStore = create<TaskStore>((set) => ({
       // Normalizar la tarea usando utility
       const normalizedTask = normalizeMongoTask(rawTask);
 
-      set({ selectedTask: normalizedTask, comments, isLoadingTaskDetails: false });
+      set({
+        selectedTask: normalizedTask,
+        comments,
+        isLoadingTaskDetails: false,
+      });
     } catch (error) {
       set({
         error: "No se pudieron cargar los detalles de la tarea.",
@@ -114,7 +156,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
 
       set((state) => {
         const taskExists = state.tasks.some(
-          (task) => task.id === normalizedTask.id,
+          (task) => task.id === normalizedTask.id
         );
         const newUpdatingTasks = new Set(state.updatingTasks);
         newUpdatingTasks.delete(taskId);
@@ -152,7 +194,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
       }
 
       const taskIndex = state.tasks.findIndex(
-        (task) => task.id === updateTask.id,
+        (task) => task.id === updateTask.id
       );
 
       if (taskIndex === -1) {
