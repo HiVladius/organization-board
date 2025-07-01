@@ -26,9 +26,8 @@ export const createCommentSchema = z.object({
 });
 
 export const addMemberSchema = z.object({
-  email: z.string().email({message: "Direccion de correo invalido"}),
-})
-
+  email: z.string().email({ message: "Direccion de correo invalido" }),
+});
 
 export type TLoginSchema = z.infer<typeof loginSchema>;
 export type TCreateProjectSchema = z.infer<typeof createProjectSchema>;

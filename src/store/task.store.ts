@@ -29,7 +29,7 @@ interface TaskStore {
   createTask: (
     projectId: string,
     title: string,
-    status?: string
+    status?: string,
   ) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
 }
@@ -156,7 +156,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       set((state) => {
         const taskExists = state.tasks.some(
-          (task) => task.id === normalizedTask.id
+          (task) => task.id === normalizedTask.id,
         );
         const newUpdatingTasks = new Set(state.updatingTasks);
         newUpdatingTasks.delete(taskId);
@@ -194,7 +194,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       }
 
       const taskIndex = state.tasks.findIndex(
-        (task) => task.id === updateTask.id
+        (task) => task.id === updateTask.id,
       );
 
       if (taskIndex === -1) {

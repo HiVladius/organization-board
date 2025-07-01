@@ -29,21 +29,32 @@ export const getCommentsByTaskId = async (
   return response.data;
 };
 
-
-export const createTask = async (projectId: string, title: string, status: string = "ToDo"):Promise<Task> => {
-  const response = await apiClient.post<Task>(`/projects/${projectId}/tasks`, { 
-    title, 
-    status 
+export const createTask = async (
+  projectId: string,
+  title: string,
+  status: string = "ToDo",
+): Promise<Task> => {
+  const response = await apiClient.post<Task>(`/projects/${projectId}/tasks`, {
+    title,
+    status,
   });
   return response.data;
-}
+};
 
 export const deleteTask = async (taskId: string) => {
   const response = await apiClient.delete(`/tasks/${taskId}`);
-  return response.data; 
-}
-
-export const updateTask = async (title?:string, status?:string, priority?: string) => {
-  const response = await apiClient.put(`/tasks/${title}`, { title, status, priority });
   return response.data;
-}
+};
+
+export const updateTask = async (
+  title?: string,
+  status?: string,
+  priority?: string,
+) => {
+  const response = await apiClient.put(`/tasks/${title}`, {
+    title,
+    status,
+    priority,
+  });
+  return response.data;
+};

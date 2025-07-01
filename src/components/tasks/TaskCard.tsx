@@ -53,9 +53,6 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
       }`}
       onClick={handleCardClick}
     >
-      
-      
-
       <div
         {...listeners}
         {...attributes}
@@ -81,13 +78,12 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
 
       {/* Contenido de la tarjeta - Clickeable para abrir detalles */}
       <div className="select-none pl-2 transition-all duration-200">
-
-         <button
-        onClick={handleDeleteTask}
-        className="absolute right-1 top-1 z-10 hidden h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-700 hover:text-white group-hover:flex"
-      >
-        &times;
-      </button>
+        <button
+          onClick={handleDeleteTask}
+          className="absolute right-1 top-1 z-10 hidden h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-700 hover:text-white group-hover:flex"
+        >
+          &times;
+        </button>
 
         <h4 className="text-sm font-medium text-slate-200 transition-colors duration-200 group-hover:text-white">
           {task.title}

@@ -40,11 +40,40 @@ export const useAuthStore = create<AuthState>()(
         const response = await apiClient.post("/auth/login", credentials);
         const { user, token } = response.data;
 
+        // Normalizar el ID del usuario para compatibilidad con MongoDB
+        let normalizedUserId = user.id;
+        if (user._id) {
+          if (typeof user._id === "object") {
+            if (user._id.$oid) {
+              normalizedUserId = user._id.$oid;
+            } else if (user._id.toString) {
+              normalizedUserId = user._id.toString();
+            } else {
+              normalizedUserId = String(user._id);
+            }
+          } else if (typeof user._id === "string") {
+            normalizedUserId = user._id;
+          } else {
+            normalizedUserId = String(user._id);
+          }
+        }
+
+        // Asegurar que siempre sea un string
+        normalizedUserId = String(normalizedUserId);
+
+        const normalizedUser = {
+          ...user,
+          id: normalizedUserId,
+        };
+
+        console.log("DEBUG Login - Original user:", user);
+        console.log("DEBUG Login - Normalized user:", normalizedUser);
+
         // Guardamos el token en localStorage para el interceptor de Axios
         localStorage.setItem("authToken", token);
 
         // Actualizamos el estado de la aplicación
-        set({ user, token, isAuthenticated: true });
+        set({ user: normalizedUser, token, isAuthenticated: true });
       },
 
       // Acción de Logout
