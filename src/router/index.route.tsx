@@ -3,7 +3,10 @@ import { LoginPages } from "../pages/LoginPages";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ProjectPage } from "../pages/ProjectsPage";
 import { ProjectBoardPage } from "../pages/ProjectBoardPage";
+import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage";
 // import { Testpage } from "../pages/test.page";
+
+
 
 export const router = createBrowserRouter([
   {
@@ -22,10 +25,11 @@ export const router = createBrowserRouter([
         path: "/project/:projectId",
         element: <ProjectBoardPage />,
       },
-      // {
-      //     path: "/test",
-      //     element: <Testpage />,
-      // },
+      {
+        path: "/project/:projectId/settings",
+        element: <ProjectSettingsPage />,
+      }
+
     ],
   },
 ]);

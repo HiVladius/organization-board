@@ -3,21 +3,138 @@ import {
   createProject,
   type CreateProjectPayload,
   getProjects,
-} from "../api/projects";
-import type { Project } from "../types/index.types";
+} from "@/api/projects";
 
+import type { Project, User } from "@/types/index.types";
+import {
+  getProjectsMembers,
+  addProjectMember,
+  removeProjectMember,
+} from "@/api/members";
+import { normalizeId } from "@/helpers/normalizedId";
 interface ProjectState {
   projects: Project[];
+  selectedProject: Project | null; // Agregar estado para el proyecto seleccionado
+  members: User[]; // Agregar estado para los miembros del proyecto
   isLoading: boolean;
   error: string | null;
   fetchProjects: () => Promise<void>;
   createNewProject: (data: CreateProjectPayload) => Promise<void>;
+  fetchProjectById: (projectId: string) => Promise<void>;
+  fetchMembers: (projectId: string) => Promise<void>;
+  addMembers: (projectId: string, email: string) => Promise<void>;
+  removeMember: (projectId: string, memberId: string) => Promise<void>;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   projects: [],
+  selectedProject: null, // Agregar estado para el proyecto seleccionado
+  members: [], // Agregar estado para los miembros del proyecto
   isLoading: false,
   error: null,
+
+  fetchProjectById: async (projectId: string) => {
+    set({ isLoading: true, error: null });
+    
+    try {
+      // Primero intentar encontrar el proyecto en el estado local
+      let project = get().projects.find((p) => p.id === projectId);
+      
+      // Si no se encuentra localmente, cargar todos los proyectos
+      if (!project) {
+        const rawProjects = await getProjects();
+        console.log("Raw projects from API:", rawProjects);
+
+        // Mapear _id a id para compatibilidad con MongoDB
+        const projectsWithId = rawProjects.map((p: any) => {
+          let normalizedProjectId = p.id;
+
+          // Manejar diferentes formatos de ID de MongoDB
+          if (p._id) {
+            if (typeof p._id === "object") {
+              if (p._id.$oid) {
+                normalizedProjectId = p._id.$oid;
+              } else if (p._id.toString) {
+                normalizedProjectId = p._id.toString();
+              } else {
+                normalizedProjectId = String(p._id);
+              }
+            } else if (typeof p._id === "string") {
+              normalizedProjectId = p._id;
+            } else {
+              normalizedProjectId = String(p._id);
+            }
+          }
+
+          // Asegurar que siempre sea un string
+          normalizedProjectId = String(normalizedProjectId);
+
+          return {
+            ...p,
+            id: normalizedProjectId,
+          };
+        });
+
+        // Actualizar el estado con todos los proyectos
+        set({ projects: projectsWithId });
+        
+        // Buscar el proyecto específico en la lista actualizada
+        project = projectsWithId.find((p) => p.id === projectId);
+      }
+      
+      set({ selectedProject: project || null, isLoading: false });
+    } catch (error) {
+      console.error("Fallo al obtener el proyecto:", error);
+      set({
+        error: "No se puede cargar el proyecto",
+        selectedProject: null,
+        isLoading: false,
+      });
+    }
+  },
+
+  fetchMembers: async (projectId) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const rawMembers = await getProjectsMembers(projectId);
+      const membersWithId = rawMembers.map((members) => ({
+        ...members,
+        id: normalizeId(members), // Normalizar el ID de MongoDB
+      }));
+
+      set({ members: membersWithId, isLoading: false });
+    } catch (error) {
+      console.error("Fallo al obtener los miembros del proyecto:", error);
+      set({
+        error: "No se pueden cargar los miembros del proyecto",
+        isLoading: false,
+      });
+    }
+  },
+
+  addMembers: async (projectId, email) => {
+    try {
+      await addProjectMember(projectId, email);
+      await get().fetchMembers(projectId); // Refrescar la lista de miembros
+    } catch (error) {
+      console.error("Fallo al agregar el miembro al proyecto:", error);
+      throw error; // Propagar el error para manejarlo en el componente
+    }
+  },
+
+  removeMember: async (projectId, email) => {
+    try {
+      await removeProjectMember(projectId, email);
+      set((state) => ({
+        members: state.members.filter((member) => member.id !== email), // Filtrar el miembro eliminado
+      }));
+    } catch (error) {
+      console.error("Fallo al eliminar el miembro del proyecto:", error);
+      throw error; // Propagar el error para manejarlo en el componente
+    }
+  },
+
   fetchProjects: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -60,7 +177,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
           "Mapped ID:",
           mappedProject.id,
           "Type:",
-          typeof mappedProject.id,
+          typeof mappedProject.id
         );
         return mappedProject;
       });
