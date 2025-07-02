@@ -14,10 +14,11 @@ interface TaskColumnProps {
   tasks: Task[];
   projectId: string;
   onTaskClick?: (taskId: string) => void;
+  onEditTask?: (task: Task) => void;
 }
 
 export const TaskColum = (
-  { title, tasks, id, projectId, onTaskClick }: TaskColumnProps,
+  { title, tasks, id, projectId, onTaskClick, onEditTask }: TaskColumnProps,
 ) => {
   // Filtrar tareas con IDs válidos
   const validTasks = tasks.filter((task) =>
@@ -55,7 +56,12 @@ export const TaskColum = (
               strategy={verticalListSortingStrategy}
             >
               {validTasks.map((task) => (
-                <TaskCard key={task.id} task={task} onTaskClick={onTaskClick} />
+                <TaskCard 
+                  key={task.id} 
+                  task={task} 
+                  onTaskClick={onTaskClick} 
+                  onEditTask={onEditTask}
+                />
               ))}
             </SortableContext>
           )

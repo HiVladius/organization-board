@@ -7,6 +7,12 @@ export type CreateProjectPayload = {
   description?: string;
 };
 
+export type UpdateProjectPayload = {
+  name?: string;
+  description?: string;
+  key?: string; 
+};
+
 export const getProjects = async (): Promise<Project[]> => {
   const response = await apiClient.get("/projects");
   return response.data;
@@ -16,5 +22,13 @@ export const createProject = async (
   data: CreateProjectPayload,
 ): Promise<Project> => {
   const response = await apiClient.post("/projects", data);
+  return response.data;
+};
+
+export const updateProject = async (
+  projectId: string,
+  data: UpdateProjectPayload,
+): Promise<Project> => {
+  const response = await apiClient.patch(`/projects/${projectId}`, data);
   return response.data;
 };

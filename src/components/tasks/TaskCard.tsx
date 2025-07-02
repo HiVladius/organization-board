@@ -6,9 +6,10 @@ import { CSS } from "@dnd-kit/utilities";
 interface TaskCardProps {
   task: Task;
   onTaskClick?: (taskId: string) => void;
+  onEditTask?: (task: Task) => void;
 }
 
-export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
+export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
   const {
     attributes,
     listeners,
@@ -39,6 +40,13 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
     e.stopPropagation(); // Evita que el click se propague al contenedor del card
     if (window.confirm("¿Estas seguro de eliminar la tarea?")) {
       deleteTask(task.id);
+    }
+  };
+
+  const handleEditTask = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que el click se propague al contenedor del card
+    if (onEditTask) {
+      onEditTask(task);
     }
   };
 
@@ -78,12 +86,24 @@ export const TaskCard = ({ task, onTaskClick }: TaskCardProps) => {
 
       {/* Contenido de la tarjeta - Clickeable para abrir detalles */}
       <div className="select-none pl-2 transition-all duration-200">
-        <button
-          onClick={handleDeleteTask}
-          className="absolute right-1 top-1 z-10 hidden h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-700 hover:text-white group-hover:flex"
-        >
-          &times;
-        </button>
+        <div className="absolute right-1 top-1 z-10 hidden gap-1 group-hover:flex">
+          <button
+            onClick={handleEditTask}
+            className="h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-700 hover:text-cyan-400 flex"
+            title="Editar tarea"
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+          <button
+            onClick={handleDeleteTask}
+            className="h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-700 hover:text-red-400 flex"
+            title="Eliminar tarea"
+          >
+            &times;
+          </button>
+        </div>
 
         <h4 className="text-sm font-medium text-slate-200 transition-colors duration-200 group-hover:text-white">
           {task.title}

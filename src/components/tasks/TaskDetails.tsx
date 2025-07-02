@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useTaskStore } from "@/store/task.store";
 import { CreateCommentForm } from "./CreateCommentForm";
+import { EditTaskForm } from "./EditTaskForm";
 
 export const TaskDetails = () => {
   const { selectedTask, comments, isLoadingTaskDetails } = useTaskStore();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   if (isLoadingTaskDetails || !selectedTask) {
     return <p className="text-center text-slate-400">Cargando detalles...</p>;
@@ -10,8 +13,18 @@ export const TaskDetails = () => {
 
   return (
     <div className="text-white">
-      <p className="text-sm text-slate-400">{selectedTask.project_key}-ID</p>
-      <h2 className="text-2xl font-bold">{selectedTask.title}</h2>
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <p className="text-sm text-slate-400">{selectedTask.project_key}-ID</p>
+          <h2 className="text-2xl font-bold">{selectedTask.title}</h2>
+        </div>
+        <button
+          onClick={() => setIsEditModalOpen(true)}
+          className="px-3 py-1 rounded-md bg-slate-600 hover:bg-slate-500 text-white text-sm"
+        >
+          Editar
+        </button>
+      </div>
 
       <div className="mt-4">
         <h3 className="text-lg font-semibold">Description</h3>
@@ -35,6 +48,14 @@ export const TaskDetails = () => {
         </div>
         <CreateCommentForm taskId={selectedTask.id} />
       </div>
+
+      {selectedTask && (
+        <EditTaskForm
+          task={selectedTask}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

@@ -19,6 +19,7 @@ import type { Task } from "@/types/index.types";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { Modal } from "@/components/ui/Modal";
 import { TaskDetails } from "@/components/tasks/TaskDetails";
+import { EditTaskForm } from "@/components/tasks/EditTaskForm";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ProjectSettings } from "@/components/ProjectSettings";
 
@@ -35,6 +36,8 @@ export const ProjectBoardPage = () => {
   } = useTaskStore();
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
   const [isSettingsSidebarOpen, setSettingsSidebarOpen] = useState(false);
+  const [isEditTaskModalOpen, setEditTaskModalOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   // Configurar sensores con restricciones de activación
@@ -61,6 +64,8 @@ export const ProjectBoardPage = () => {
   useEffect(() => {
     if (projectId) {
       fetchTasks(projectId);
+    } else {
+      console.error("No se pudo obtener el projectId desde los parámetros de la URL.");
     }
   }, [projectId, fetchTasks]);
 
@@ -140,6 +145,16 @@ export const ProjectBoardPage = () => {
     clearSelectedTask();
   };
 
+  const handleEditTask = (task: Task) => {
+    setTaskToEdit(task);
+    setEditTaskModalOpen(true);
+  };
+
+  const handleCloseEditTask = () => {
+    setEditTaskModalOpen(false);
+    setTaskToEdit(null);
+  };
+
   if (isLoading) return <p className="text-white">Cargando tablero...</p>;
   if (error) return <p className="text-red-400">Error: {error}</p>;
 
@@ -182,6 +197,7 @@ export const ProjectBoardPage = () => {
               id={TaskStatus.ToDo}
               projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
+              onEditTask={handleEditTask}
             />
             <TaskColum
               title="En Progreso"
@@ -189,6 +205,7 @@ export const ProjectBoardPage = () => {
               id={TaskStatus.InProgress}
               projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
+              onEditTask={handleEditTask}
             />
             <TaskColum
               title="Completadas"
@@ -196,6 +213,7 @@ export const ProjectBoardPage = () => {
               id={TaskStatus.Done}
               projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
+              onEditTask={handleEditTask}
             />
             <TaskColum
               title="Canceladas"
@@ -203,6 +221,7 @@ export const ProjectBoardPage = () => {
               id={TaskStatus.Cancelled}
               projectId={projectId!}
               onTaskClick={handleOpenTaskDetails}
+              onEditTask={handleEditTask}
             />
           </div>
         </div>
@@ -220,6 +239,15 @@ export const ProjectBoardPage = () => {
       >
         <TaskDetails />
       </Modal>
+
+      {/* Modal de Edición de Tarea */}
+      {taskToEdit && (
+        <EditTaskForm
+          task={taskToEdit}
+          isOpen={isEditTaskModalOpen}
+          onClose={handleCloseEditTask}
+        />
+      )}
 
       <Sidebar
         isOpen={isSettingsSidebarOpen}

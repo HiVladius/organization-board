@@ -6,10 +6,12 @@ import { loginSchema } from "../lib/validators";
 import type { TLoginSchema } from "../lib/validators";
 import { useAuthStore } from "../store/auth_store";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 export const LoginPages = () => {
   const [error, setError] = useState<string | null>(null);
   const { login } = useAuthStore();
+  const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } =
     useForm<TLoginSchema>({
@@ -20,7 +22,7 @@ export const LoginPages = () => {
     setError(null);
     try {
       await login(data);
-      alert("Login successful!");
+      navigate("/"); // Redirige a la página de proyectos después de iniciar sesión
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         setError(

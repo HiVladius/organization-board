@@ -23,11 +23,7 @@ export const router = createBrowserRouter([
         path: "/project/:projectId",
         element: <ProjectBoardPage />,
       },
-      // Ya no necesitamos esta ruta porque ahora es un sidebar
-      // {
-      //   path: "/project/:projectId/settings",
-      //   element: <ProjectSettingsPage />,
-      // }
+      
     ],
   },
 ]);
