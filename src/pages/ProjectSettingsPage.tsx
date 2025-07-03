@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { type TAddMemberSchema } from "../lib/validators";
 import { useProjectStore } from "@/store/project.store";
 import { useAuthStore } from "@/store/auth_store";
+import { SkeletonSpinner } from "@/components/ui/Skeleton";
 
 export const ProjectSettingsPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -80,7 +81,7 @@ export const ProjectSettingsPage = () => {
   console.log("DEBUG - Type of Current User ID:", typeof currentUser?.id);
   console.log("DEBUG - Type of Project Owner ID:", typeof selectedProject?.owner_id);
 
-  if (isLoading) return <p className="text-white">Cargando...</p>;
+  if (isLoading) return <SkeletonSpinner text="Cargando configuración del proyecto..." />;
 
   if (error) return <p className="text-red-400">Error: {error}</p>;
 
