@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import type { Project, User } from "../../types/index.types";
+import type { Project, User } from "@/types/index.types";
 import { EditProjectForm } from "../EditProjectForm";
+import { useProjectStore } from "@/store/project.store";
 
 interface ProjectCardProps {
   project: Project;
@@ -10,11 +11,30 @@ interface ProjectCardProps {
 
 export const ProjectCard = ({ project, user }: ProjectCardProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { deleteProject } = useProjectStore();
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevenir navegación
     e.stopPropagation(); // Detener propagación del evento
     setIsEditModalOpen(true);
+  };
+
+  const handleDeleteClick = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevenir navegación
+    e.stopPropagation(); // Detener propagación del evento
+    
+    if (window.confirm(`¿Estás seguro de que quieres eliminar el proyecto "${project.name}"?`)) {
+      try {
+        setIsDeleting(true);
+        await deleteProject(project.id);
+      } catch (error) {
+        console.error("Error al eliminar el proyecto:", error);
+        alert("Error al eliminar el proyecto. Por favor, inténtalo de nuevo.");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
   };
 
   return (
@@ -33,12 +53,21 @@ export const ProjectCard = ({ project, user }: ProjectCardProps) => {
             </h3>
             <p className="text-sm text-slate-400">{user?.username}</p>
           </div>
-          <button
-            onClick={handleEditClick}
-            className="opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 rounded text-xs bg-slate-600 hover:bg-slate-500 text-white"
-          >
-            Editar
-          </button>
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+            <button
+              onClick={handleEditClick}
+              className="px-2 py-1 rounded text-xs bg-slate-600 hover:bg-slate-500 text-white"
+            >
+              Editar
+            </button>
+            <button
+              onClick={handleDeleteClick}
+              disabled={isDeleting}
+              className="px-2 py-1 rounded text-xs bg-red-600 hover:bg-red-500 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isDeleting ? "Eliminando..." : "Eliminar"}
+            </button>
+          </div>
         </div>
 
         {project.description && (

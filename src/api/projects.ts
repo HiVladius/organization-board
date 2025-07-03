@@ -1,5 +1,5 @@
 import apiClient from "./index.api";
-import type { Project } from "../types/index.types";
+import type { Project } from "@/types/index.types";
 
 export type CreateProjectPayload = {
   name: string;
@@ -32,3 +32,8 @@ export const updateProject = async (
   const response = await apiClient.patch(`/projects/${projectId}`, data);
   return response.data;
 };
+
+export const deleteProject = async (projectId: string): Promise<Project> => {
+  const response = await apiClient.delete(`/projects/${projectId}`);
+  return response.data;
+}

@@ -22,7 +22,7 @@ export const LoginPages = () => {
     setError(null);
     try {
       await login(data);
-      navigate("/"); // Redirige a la página de proyectos después de iniciar sesión
+      navigate("/board"); // Redirige a la página de proyectos después de iniciar sesión
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         setError(

@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { ProjectCard } from "../components/ui/ProjectCard";
-import { useProjectStore } from "../store/project.store";
-import { useAuthStore } from "../../src/store/auth_store";
-import { Modal } from "../components/ui/Modal";
-import { CreateProjectForm } from "../components/CreateProjectForm";
+import { ProjectCard } from "@/components/ui/ProjectCard";
+import { useProjectStore } from "@/store/project.store";
+import { useAuthStore } from "@/store/auth_store";
+import { Modal } from "@/components/ui/Modal";
+import { CreateProjectForm } from "@/components/CreateProjectForm";
 
 export const ProjectPage = () => {
   const { projects, isLoading, fetchProjects } = useProjectStore();
   const { user } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const projectsData = use(fetchProjects());
 
   useEffect(() => {
     fetchProjects();
@@ -53,6 +52,7 @@ export const ProjectPage = () => {
               <ProjectCard
                 key={`${project.id}-${project.name || index}`}
                 project={project}
+                user={user!}
               />
             ))}
         </div>

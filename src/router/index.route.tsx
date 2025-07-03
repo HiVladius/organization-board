@@ -1,6 +1,7 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { LoginPages } from "../pages/LoginPages";
-import { ProtectedRoute } from "./ProtectedRoute";
+import { AuthGuard } from "./AuthGuard";
+import { AppLayout } from "../components/layout/AppLayout";
 import { ProjectPage } from "../pages/ProjectsPage";
 import { ProjectBoardPage } from "../pages/ProjectBoardPage";
 // import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage"; // Ya no es necesario como página separada
@@ -9,21 +10,32 @@ import { ProjectBoardPage } from "../pages/ProjectBoardPage";
 export const router = createBrowserRouter([
   {
     path: "/login",
-    element: <LoginPages />,
+    element: (
+      <AuthGuard requireAuth={false}>
+        <LoginPages />
+      </AuthGuard>
+    ),
   },
   {
     path: "/",
-    element: <ProtectedRoute />,
+    element: (
+      <AuthGuard requireAuth={true}>
+        <AppLayout />
+      </AuthGuard>
+    ),
     children: [
       {
         index: true,
+        element: <Navigate to="/board" replace />,
+      },
+      {
+        path: "/board",
         element: <ProjectPage />,
       },
       {
         path: "/project/:projectId",
         element: <ProjectBoardPage />,
       },
-      
     ],
   },
 ]);
