@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { type TAddMemberSchema } from "../lib/validators";
 import { useProjectStore } from "@/store/project.store";
 import { useAuthStore } from "@/store/auth_store";
+import { EditProjectForm } from "./EditProjectForm";
 
 interface ProjectSettingsProps {
   projectId: string;
@@ -30,6 +31,7 @@ export const ProjectSettings = (
 
   const [addMemberError, setAddMemberError] = useState<string>("");
   const [addMemberSuccess, setAddMemberSuccess] = useState<string>("");
+  const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
 
   useEffect(() => {
     if (projectId) {
@@ -146,6 +148,50 @@ export const ProjectSettings = (
           Is Owner: {isOwner ? 'true' : 'false'}<br/>
           Current User: {currentUser?.username || 'N/A'}
         </div> */}
+      </div>
+
+      {/* Información del Proyecto */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-white">
+            Información del Proyecto
+          </h3>
+          {/* {isOwner && (
+            <button
+              onClick={() => setIsEditProjectModalOpen(true)}
+              className="px-3 py-1.5 rounded-md bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium transition-colors"
+            >
+              Editar Proyecto
+            </button>
+          )} */}
+        </div>
+        
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6 border border-slate-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">
+                Nombre del Proyecto
+              </label>
+              <p className="text-white font-medium">{selectedProject.name}</p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">
+                Clave del Proyecto
+              </label>
+              <p className="text-white font-medium">{selectedProject.project_key}</p>
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-300 mb-1">
+                Descripción
+              </label>
+              <p className="text-slate-300">
+                {selectedProject.description || "Sin descripción"}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {isOwner && (
@@ -330,6 +376,15 @@ export const ProjectSettings = (
             )}
         </div>
       </div>
+      
+      {/* Modal de Edición de Proyecto */}
+      {selectedProject && (
+        <EditProjectForm
+          project={selectedProject}
+          isOpen={isEditProjectModalOpen}
+          onClose={() => setIsEditProjectModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

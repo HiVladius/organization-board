@@ -1,10 +1,16 @@
 import apiClient from "./index.api";
-import type { Project } from "../types/index.types";
+import type { Project } from "@/types/index.types";
 
 export type CreateProjectPayload = {
   name: string;
   key: string;
   description?: string;
+};
+
+export type UpdateProjectPayload = {
+  name?: string;
+  description?: string;
+  key?: string; 
 };
 
 export const getProjects = async (): Promise<Project[]> => {
@@ -18,3 +24,16 @@ export const createProject = async (
   const response = await apiClient.post("/projects", data);
   return response.data;
 };
+
+export const updateProject = async (
+  projectId: string,
+  data: UpdateProjectPayload,
+): Promise<Project> => {
+  const response = await apiClient.patch(`/projects/${projectId}`, data);
+  return response.data;
+};
+
+export const deleteProject = async (projectId: string): Promise<Project> => {
+  const response = await apiClient.delete(`/projects/${projectId}`);
+  return response.data;
+}

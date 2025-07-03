@@ -4,6 +4,7 @@ import {
   getCommentsByTaskId,
   getTaskById,
   getTaskByProjectId,
+  updateTask,
 } from "@/api/tasks";
 import { createComment } from "@/api/comments";
 import type { Comment, Task, TaskStatus } from "@/types/index.types";
@@ -22,6 +23,12 @@ interface TaskStore {
   updatingTasks: Set<string>; // Usar Set para mejor performance
   fetchTasks: (projectId: string) => Promise<void>;
   updateTask: (taskId: string, newStatus: TaskStatus) => Promise<Task>;
+  updateTaskDetails: (taskId: string, updates: {
+    title?: string;
+    description?: string;
+    priority?: string;
+    assignee_id?: string;
+  }) => Promise<void>;
   updateTaskFromWebSocket: (updateTask: Task) => void;
   fetchTaskById: (taskId: string) => Promise<void>;
   clearSelectedTask: () => void;
@@ -213,5 +220,25 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         ),
       };
     });
+  },
+
+  updateTaskDetails: async (taskId, updates) => {
+    try {
+      const updatedTask = await updateTask(taskId, updates);
+      const normalizedTask = normalizeMongoTask(updatedTask);
+      
+      set((state) => ({
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.id === normalizedTask.id ? normalizedTask : task
+        ),
+        selectedTask: state.selectedTask?.id === normalizedTask.id 
+          ? normalizedTask 
+          : state.selectedTask,
+      }));
+    } catch (error) {
+      console.error("Error al actualizar la tarea:", error);
+      throw error;
+    }
   },
 }));

@@ -12,9 +12,11 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  isInitialized: boolean; // Nueva propiedad para saber si el estado inicial ya se cargó
   login: (credentials: TLoginSchema) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null, token: string | null) => void;
+  initialize: () => void; // Nueva función para inicializar el estado
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -25,6 +27,12 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
+      isInitialized: false,
+
+      // Acción para inicializar el estado (útil para verificar tokens al cargar la app)
+      initialize: () => {
+        set({ isInitialized: true });
+      },
 
       // Acción para establecer el usuario y el token
       setUser: (user, token) => {
@@ -32,6 +40,7 @@ export const useAuthStore = create<AuthState>()(
           user,
           token,
           isAuthenticated: !!user && !!token,
+          isInitialized: true,
         });
       },
 
@@ -73,13 +82,13 @@ export const useAuthStore = create<AuthState>()(
         localStorage.setItem("authToken", token);
 
         // Actualizamos el estado de la aplicación
-        set({ user: normalizedUser, token, isAuthenticated: true });
+        set({ user: normalizedUser, token, isAuthenticated: true, isInitialized: true });
       },
 
       // Acción de Logout
       logout: () => {
         localStorage.removeItem("authToken");
-        set({ user: null, token: null, isAuthenticated: false });
+        set({ user: null, token: null, isAuthenticated: false, isInitialized: true });
       },
     }),
     {

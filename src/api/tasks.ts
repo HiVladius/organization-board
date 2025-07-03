@@ -47,14 +47,15 @@ export const deleteTask = async (taskId: string) => {
 };
 
 export const updateTask = async (
-  title?: string,
-  status?: string,
-  priority?: string,
-) => {
-  const response = await apiClient.put(`/tasks/${title}`, {
-    title,
-    status,
-    priority,
-  });
+  taskId: string,
+  updates: {
+    title?: string;
+    description?: string;
+    status?: string;
+    priority?: string;
+    assignee_id?: string;
+  },
+): Promise<Task> => {
+  const response = await apiClient.patch(`/tasks/${taskId}`, updates);
   return response.data;
 };

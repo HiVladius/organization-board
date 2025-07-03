@@ -3,6 +3,9 @@ import {
   createProject,
   type CreateProjectPayload,
   getProjects,
+  updateProject,
+  type UpdateProjectPayload,
+  deleteProject,
 } from "@/api/projects";
 
 import type { Project, User } from "@/types/index.types";
@@ -12,6 +15,7 @@ import {
   removeProjectMember,
 } from "@/api/members";
 import { normalizeId } from "@/helpers/normalizedId";
+
 interface ProjectState {
   projects: Project[];
   selectedProject: Project | null; // Agregar estado para el proyecto seleccionado
@@ -20,10 +24,15 @@ interface ProjectState {
   error: string | null;
   fetchProjects: () => Promise<void>;
   createNewProject: (data: CreateProjectPayload) => Promise<void>;
+  updateProject: (
+    projectId: string,
+    data: UpdateProjectPayload
+  ) => Promise<void>;
   fetchProjectById: (projectId: string) => Promise<void>;
   fetchMembers: (projectId: string) => Promise<void>;
   addMembers: (projectId: string, email: string) => Promise<void>;
   removeMember: (projectId: string, memberId: string) => Promise<void>;
+  deleteProject: (projectId: string) => Promise<void>;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -32,6 +41,33 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   members: [], // Agregar estado para los miembros del proyecto
   isLoading: false,
   error: null,
+
+  deleteProject: async (projectId: string) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      await deleteProject(projectId);
+
+      set((state) => ({
+        projects: state.projects.filter((project) => project.id !== projectId),
+        // Si el proyecto eliminado era el seleccionado, limpiarlo
+        selectedProject:
+          state.selectedProject?.id === projectId
+            ? null
+            : state.selectedProject,
+        // Limpiar miembros si el proyecto eliminado era el seleccionado
+        members: state.selectedProject?.id === projectId ? [] : state.members,
+        isLoading: false,
+      }));
+    } catch (error) {
+      console.error("Error al eliminar el proyecto:", error);
+      set({
+        error: "No se puede eliminar el proyecto",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
 
   fetchProjectById: async (projectId: string) => {
     set({ isLoading: true, error: null });
@@ -43,7 +79,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       // Si no se encuentra localmente, cargar todos los proyectos
       if (!project) {
         const rawProjects = await getProjects();
-        console.log("Raw projects from API:", rawProjects);
 
         // Mapear _id a id para compatibilidad con MongoDB
         const projectsWithId = rawProjects.map((p: any) => {
@@ -64,39 +99,41 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
             } else {
               normalizedProjectId = String(p._id);
             }
-          }        // Asegurar que siempre sea un string
-        normalizedProjectId = String(normalizedProjectId);        // Normalizar también el owner_id
-        let normalizedOwnerId = p.owner_id;
-        if (p.owner_id) {
-          if (typeof p.owner_id === "object") {
-            if (p.owner_id.$oid) {
-              normalizedOwnerId = p.owner_id.$oid;
-            } else if (p.owner_id.toString) {
-              normalizedOwnerId = p.owner_id.toString();
+          } // Asegurar que siempre sea un string
+          normalizedProjectId = String(normalizedProjectId); // Normalizar también el owner_id
+          let normalizedOwnerId = p.owner_id;
+          if (p.owner_id) {
+            if (typeof p.owner_id === "object") {
+              if (p.owner_id.$oid) {
+                normalizedOwnerId = p.owner_id.$oid;
+              } else if (p.owner_id.toString) {
+                normalizedOwnerId = p.owner_id.toString();
+              } else {
+                normalizedOwnerId = String(p.owner_id);
+              }
             } else {
               normalizedOwnerId = String(p.owner_id);
             }
-          } else {
-            normalizedOwnerId = String(p.owner_id);
           }
-        }
 
-        // Normalizar los IDs de miembros si existen
-        let normalizedMembers = p.members;
-        if (Array.isArray(p.members)) {
-          normalizedMembers = p.members.map((memberId: any) => normalizeId(memberId));
-        }
+          // Normalizar los IDs de miembros si existen
+          let normalizedMembers = p.members;
+          if (Array.isArray(p.members)) {
+            normalizedMembers = p.members.map((memberId: any) =>
+              normalizeId(memberId)
+            );
+          }
 
-        return {
-          ...p,
-          id: normalizedProjectId,
-          owner_id: normalizedOwnerId,
-          members: normalizedMembers,
-        };
-      });
+          return {
+            ...p,
+            id: normalizedProjectId,
+            owner_id: normalizedOwnerId,
+            members: normalizedMembers,
+          };
+        });
 
-      // Actualizar el estado con todos los proyectos
-      set({ projects: projectsWithId });
+        // Actualizar el estado con todos los proyectos
+        set({ projects: projectsWithId });
 
         // Buscar el proyecto específico en la lista actualizada
         project = projectsWithId.find((p) => p.id === projectId);
@@ -104,7 +141,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
       set({ selectedProject: project || null, isLoading: false });
     } catch (error) {
-      console.error("Fallo al obtener el proyecto:", error);
       set({
         error: "No se puede cargar el proyecto",
         selectedProject: null,
@@ -118,19 +154,16 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
     try {
       const rawMembers = await getProjectsMembers(projectId);
-      console.log("Raw members from API:", rawMembers);
-      
+
       const membersWithId = rawMembers.map((member) => {
         const normalizedMember = {
           ...member,
           id: normalizeId(member), // Normalizar el ID de MongoDB
         };
-        
-        console.log("Original member:", member, "Normalized member:", normalizedMember);
+
         return normalizedMember;
       });
 
-      console.log("All normalized members:", membersWithId);
       set({ members: membersWithId, isLoading: false });
     } catch (error) {
       console.error("Fallo al obtener los miembros del proyecto:", error);
@@ -167,7 +200,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const project = await getProjects();
-      console.log("Raw projects from API:", project);
 
       // Mapear _id a id para compatibilidad con MongoDB
       const projectsWithId = project.map((p: any) => {
@@ -234,14 +266,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
           members: normalizedMembers,
         };
 
-        console.log(
-          "Original _id:",
-          p._id,
-          "Mapped ID:",
-          mappedProject.id,
-          "Type:",
-          typeof mappedProject.id,
-        );
         return mappedProject;
       });
 
@@ -254,7 +278,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   createNewProject: async (data) => {
     try {
       const newProject = await createProject(data);
-      console.log("New project from API:", newProject);
 
       // Mapear _id a id para compatibilidad con MongoDB
       let projectId = newProject.id;
@@ -315,10 +338,37 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         members: normalizedMembers,
       };
 
-      console.log("Mapped new project ID:", projectWithId.id);
       set({ projects: [...get().projects, projectWithId] });
     } catch (error) {
       console.error("Fallo al crear el proyecto:", error);
+      throw error;
+    }
+  },
+
+  updateProject: async (projectId, data) => {
+    try {
+      const updatedProject = await updateProject(projectId, data);
+
+      // Normalizar el ID del proyecto actualizado
+      const normalizedProjectId =
+        updatedProject.id || (updatedProject as any)._id;
+      const projectWithId = {
+        ...updatedProject,
+        id: normalizedProjectId,
+      };
+
+      set((state) => ({
+        ...state,
+        projects: state.projects.map((project) =>
+          project.id === projectId ? projectWithId : project
+        ),
+        selectedProject:
+          state.selectedProject?.id === projectId
+            ? projectWithId
+            : state.selectedProject,
+      }));
+    } catch (error) {
+      console.error("Error al actualizar el proyecto:", error);
       throw error;
     }
   },
