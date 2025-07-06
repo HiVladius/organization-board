@@ -42,6 +42,8 @@ export interface Task {
   assignee_id?: string;
   status: TaskStatus;
   priority: TaskPriority | string; // Permitir string para compatibilidad hacia atrás
+  start_date?: string; // Fecha de inicio opcional
+  end_date?: string; // Fecha final opcional
   created_at: string;
   updated_at: string;
 }

@@ -9,7 +9,9 @@ interface EditProjectFormProps {
   onClose: () => void;
 }
 
-export const EditProjectForm = ({ project, isOpen, onClose }: EditProjectFormProps) => {
+export const EditProjectForm = (
+  { project, isOpen, onClose }: EditProjectFormProps,
+) => {
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description || "");
   const [projectKey, setProjectKey] = useState(project.project_key);
@@ -29,14 +31,12 @@ export const EditProjectForm = ({ project, isOpen, onClose }: EditProjectFormPro
 
     setIsLoading(true);
     try {
-      
       await updateProject(project.id, {
         name: name.trim(),
         description: description.trim(),
         key: projectKey.trim().toUpperCase(), // Cambiar de project_key a key
       });
-      
-      
+
       onClose();
     } catch (error) {
       console.error("Error al actualizar el proyecto:", error);
@@ -64,7 +64,10 @@ export const EditProjectForm = ({ project, isOpen, onClose }: EditProjectFormPro
     <Modal isOpen={isOpen} onClose={handleClose} title="Editar Proyecto">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="project-name" className="block text-sm font-medium text-gray-200 mb-1">
+          <label
+            htmlFor="project-name"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
             Nombre del Proyecto *
           </label>
           <input
@@ -79,7 +82,10 @@ export const EditProjectForm = ({ project, isOpen, onClose }: EditProjectFormPro
         </div>
 
         <div>
-          <label htmlFor="project-key" className="block text-sm font-medium text-gray-200 mb-1">
+          <label
+            htmlFor="project-key"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
             Clave del Proyecto *
           </label>
           <input
@@ -98,7 +104,10 @@ export const EditProjectForm = ({ project, isOpen, onClose }: EditProjectFormPro
         </div>
 
         <div>
-          <label htmlFor="project-description" className="block text-sm font-medium text-gray-200 mb-1">
+          <label
+            htmlFor="project-description"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
             Descripción
           </label>
           <textarea

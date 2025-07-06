@@ -20,7 +20,9 @@ export const Skeleton = ({ className = "", children }: SkeletonProps) => {
 };
 
 // Skeleton para texto
-export const SkeletonText = ({ lines = 1, className = "" }: { lines?: number; className?: string }) => {
+export const SkeletonText = (
+  { lines = 1, className = "" }: { lines?: number; className?: string },
+) => {
   return (
     <div className={`space-y-2 ${className}`}>
       {Array.from({ length: lines }).map((_, index) => (
@@ -120,12 +122,12 @@ export const SkeletonTaskDetails = () => {
         </div>
         <Skeleton className="h-8 w-20" />
       </div>
-      
+
       <div className="space-y-3">
         <Skeleton className="h-4 w-24" />
         <SkeletonText lines={3} />
       </div>
-      
+
       <div className="space-y-3">
         <Skeleton className="h-5 w-32" />
         <div className="space-y-2">
@@ -152,7 +154,7 @@ export const SkeletonProjectSettings = () => {
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-4 w-80" />
       </div>
-      
+
       <div className="bg-slate-800/50 rounded-lg p-6 space-y-4">
         <Skeleton className="h-5 w-36" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -166,16 +168,19 @@ export const SkeletonProjectSettings = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Skeleton className="h-5 w-40" />
           <Skeleton className="h-8 w-32" />
         </div>
-        
+
         <div className="bg-slate-800/50 rounded-lg border border-slate-700">
           {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="p-4 border-b border-slate-700 last:border-b-0">
+            <div
+              key={index}
+              className="p-4 border-b border-slate-700 last:border-b-0"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Skeleton className="w-10 h-10 rounded-full" />
@@ -198,11 +203,14 @@ export const SkeletonProjectSettings = () => {
 };
 
 // Skeleton para carga general con spinner
-export const SkeletonSpinner = ({ text = "Cargando..." }: { text?: string }) => {
+export const SkeletonSpinner = (
+  { text = "Cargando..." }: { text?: string },
+) => {
   return (
     <div className="flex items-center justify-center p-8">
       <div className="flex items-center space-x-3">
-        <div className="animate-spin h-6 w-6 border-2 border-cyan-500 border-t-transparent rounded-full"></div>
+        <div className="animate-spin h-6 w-6 border-2 border-cyan-500 border-t-transparent rounded-full">
+        </div>
         <span className="text-slate-300">{text}</span>
       </div>
     </div>
@@ -214,7 +222,10 @@ export const SkeletonMembersList = ({ count = 3 }: { count?: number }) => {
   return (
     <div className="bg-slate-800/50 rounded-lg border border-slate-700">
       {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="p-4 border-b border-slate-700 last:border-b-0">
+        <div
+          key={index}
+          className="p-4 border-b border-slate-700 last:border-b-0"
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Skeleton className="w-10 h-10 rounded-full" />
@@ -235,19 +246,20 @@ export const SkeletonMembersList = ({ count = 3 }: { count?: number }) => {
 };
 
 // Skeleton para botones de carga
-export const SkeletonButton = ({ 
-  className = "", 
-  text = "Cargando..." 
-}: { 
-  className?: string; 
-  text?: string; 
+export const SkeletonButton = ({
+  className = "",
+  text = "Cargando...",
+}: {
+  className?: string;
+  text?: string;
 }) => {
   return (
-    <button 
-      disabled 
+    <button
+      disabled
       className={`inline-flex items-center justify-center gap-2 opacity-75 cursor-not-allowed ${className}`}
     >
-      <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full"></div>
+      <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full">
+      </div>
       {text}
     </button>
   );
@@ -288,7 +300,8 @@ export const TaskUpdatingIndicator = () => {
   return (
     <div className="absolute inset-0 bg-slate-800/80 backdrop-blur-sm rounded-md flex items-center justify-center z-10">
       <div className="flex items-center gap-2 text-cyan-400">
-        <div className="animate-spin h-4 w-4 border-2 border-cyan-400 border-t-transparent rounded-full"></div>
+        <div className="animate-spin h-4 w-4 border-2 border-cyan-400 border-t-transparent rounded-full">
+        </div>
         <span className="text-sm font-medium">Actualizando...</span>
       </div>
     </div>

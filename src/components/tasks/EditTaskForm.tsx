@@ -3,6 +3,7 @@ import { useTaskStore } from "@/store/task.store";
 import type { Task } from "@/types/index.types";
 import { TaskPriority } from "@/types/index.types";
 import { Modal } from "@/components/ui/Modal";
+import { DateField } from "@/components/ui/DateField";
 
 interface EditTaskFormProps {
   task: Task;
@@ -14,6 +15,12 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
   const [priority, setPriority] = useState(task.priority);
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    task.start_date ? new Date(task.start_date) : undefined,
+  );
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    task.end_date ? new Date(task.end_date) : undefined,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { updateTaskDetails } = useTaskStore();
 
@@ -26,11 +33,22 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
 
     setIsLoading(true);
     try {
+      // Por ahora solo enviamos los campos que el backend espera
       await updateTaskDetails(task.id, {
         title: title.trim(),
         description: description.trim(),
         priority,
+        // TODO: Agregar start_date y end_date cuando el backend esté listo
+        // start_date: startDate ? startDate.toISOString() : undefined,
+        // end_date: endDate ? endDate.toISOString() : undefined,
       });
+
+      // Simular que se guardaron las fechas localmente para la maqueta
+      console.log("📅 Fechas seleccionadas (solo maqueta):", {
+        start_date: startDate ? startDate.toISOString() : null,
+        end_date: endDate ? endDate.toISOString() : null,
+      });
+
       onClose();
     } catch (error) {
       console.error("Error al actualizar la tarea:", error);
@@ -45,6 +63,8 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
     setTitle(task.title);
     setDescription(task.description || "");
     setPriority(task.priority);
+    setStartDate(task.start_date ? new Date(task.start_date) : undefined);
+    setEndDate(task.end_date ? new Date(task.end_date) : undefined);
     onClose();
   };
 
@@ -52,7 +72,10 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
     <Modal isOpen={isOpen} onClose={handleClose} title="Editar Tarea">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="task-title" className="block text-sm font-medium text-gray-200 mb-1">
+          <label
+            htmlFor="task-title"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
             Título *
           </label>
           <input
@@ -67,7 +90,10 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
         </div>
 
         <div>
-          <label htmlFor="task-description" className="block text-sm font-medium text-gray-200 mb-1">
+          <label
+            htmlFor="task-description"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
             Descripción
           </label>
           <textarea
@@ -82,7 +108,10 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
         </div>
 
         <div>
-          <label htmlFor="task-priority" className="block text-sm font-medium text-gray-200 mb-1">
+          <label
+            htmlFor="task-priority"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
             Prioridad
           </label>
           <select
@@ -97,6 +126,21 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
             <option value={TaskPriority.High}>Alta</option>
             <option value={TaskPriority.Urgent}>Urgente</option>
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-200 mb-1">
+            Fechas
+          </label>
+          <DateField
+            startDate={startDate}
+            endDate={endDate}
+            onDateChange={(newStartDate, newEndDate) => {
+              setStartDate(newStartDate);
+              setEndDate(newEndDate || undefined);
+            }}
+            placeholder="Seleccionar fechas"
+          />
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">

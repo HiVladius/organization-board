@@ -66,7 +66,9 @@ export const ProjectBoardPage = () => {
     if (projectId) {
       fetchTasks(projectId);
     } else {
-      console.error("No se pudo obtener el projectId desde los parámetros de la URL.");
+      console.error(
+        "No se pudo obtener el projectId desde los parámetros de la URL.",
+      );
     }
   }, [projectId, fetchTasks]);
 

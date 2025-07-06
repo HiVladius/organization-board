@@ -78,8 +78,6 @@ export const ProjectSettings = (
 
   const isOwner = currentUser?.id === selectedProject?.owner_id;
 
-    
-
   if (isLoading) {
     return <SkeletonProjectSettings />;
   }
@@ -134,15 +132,17 @@ export const ProjectSettings = (
           </span>{" "}
           - Gestiona los miembros y configuraciones
         </p>
-        
-        {/* DEBUG TEMPORAL - Eliminar después
+
+        {
+          /* DEBUG TEMPORAL - Eliminar después
         <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-500/50 rounded-md text-yellow-200 text-sm">
           <strong>DEBUG INFO (SIDEBAR):</strong><br/>
           Current User ID: {currentUser?.id || 'null'}<br/>
           Project Owner ID: {selectedProject?.owner_id || 'null'}<br/>
           Is Owner: {isOwner ? 'true' : 'false'}<br/>
           Current User: {currentUser?.username || 'N/A'}
-        </div> */}
+        </div> */
+        }
       </div>
 
       {/* Información del Proyecto */}
@@ -151,16 +151,18 @@ export const ProjectSettings = (
           <h3 className="text-lg font-semibold text-white">
             Información del Proyecto
           </h3>
-          {/* {isOwner && (
+          {
+            /* {isOwner && (
             <button
               onClick={() => setIsEditProjectModalOpen(true)}
               className="px-3 py-1.5 rounded-md bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium transition-colors"
             >
               Editar Proyecto
             </button>
-          )} */}
+          )} */
+          }
         </div>
-        
+
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6 border border-slate-700">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -169,14 +171,16 @@ export const ProjectSettings = (
               </label>
               <p className="text-white font-medium">{selectedProject.name}</p>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">
                 Clave del Proyecto
               </label>
-              <p className="text-white font-medium">{selectedProject.project_key}</p>
+              <p className="text-white font-medium">
+                {selectedProject.project_key}
+              </p>
             </div>
-            
+
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-300 mb-1">
                 Descripción
@@ -371,7 +375,7 @@ export const ProjectSettings = (
             )}
         </div>
       </div>
-      
+
       {/* Modal de Edición de Proyecto */}
       {selectedProject && (
         <EditProjectForm

@@ -7,7 +7,9 @@ interface AuthGuardProps {
   requireAuth?: boolean; // true para rutas protegidas, false para rutas públicas (como login)
 }
 
-export const AuthGuard = ({ children, requireAuth = false }: AuthGuardProps) => {
+export const AuthGuard = (
+  { children, requireAuth = false }: AuthGuardProps,
+) => {
   const { isAuthenticated, isInitialized, initialize } = useAuthStore();
   const location = useLocation();
 

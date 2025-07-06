@@ -25,7 +25,7 @@ export const useLoadingState = (options: UseLoadingStateOptions = {}) => {
 
   const executeWithLoading = async <T>(
     asyncFunction: () => Promise<T>,
-    onError?: (error: any) => string
+    onError?: (error: any) => string,
   ): Promise<T | null> => {
     try {
       startLoading();

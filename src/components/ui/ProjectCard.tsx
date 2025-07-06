@@ -23,8 +23,12 @@ export const ProjectCard = ({ project, user }: ProjectCardProps) => {
   const handleDeleteClick = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevenir navegación
     e.stopPropagation(); // Detener propagación del evento
-    
-    if (window.confirm(`¿Estás seguro de que quieres eliminar el proyecto "${project.name}"?`)) {
+
+    if (
+      window.confirm(
+        `¿Estás seguro de que quieres eliminar el proyecto "${project.name}"?`,
+      )
+    ) {
       try {
         setIsDeleting(true);
         await deleteProject(project.id);

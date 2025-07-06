@@ -16,7 +16,9 @@ export const TaskDetails = () => {
     <div className="text-white">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <p className="text-sm text-slate-400">{selectedTask.project_key}-ID</p>
+          <p className="text-sm text-slate-400">
+            {selectedTask.project_key}-ID
+          </p>
           <h2 className="text-2xl font-bold">{selectedTask.title}</h2>
         </div>
         <button
@@ -33,6 +35,92 @@ export const TaskDetails = () => {
           {selectedTask.description || "No hay descipción para esta tarea."}
         </p>
       </div>
+
+      {/* Mostrar fechas si están disponibles */}
+      {(selectedTask.start_date || selectedTask.end_date) && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold">Fechas</h3>
+          <div className="mt-2 space-y-2">
+            {selectedTask.start_date && (
+              <div className="flex items-center gap-2 text-slate-300">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span>
+                  <strong>Fecha de inicio:</strong>{" "}
+                  {new Date(selectedTask.start_date).toLocaleDateString(
+                    "es-ES",
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    },
+                  )}
+                </span>
+              </div>
+            )}
+            {selectedTask.end_date && (
+              <div className="flex items-center gap-2 text-slate-300">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>
+                  <strong>Fecha final:</strong>{" "}
+                  {new Date(selectedTask.end_date).toLocaleDateString("es-ES", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+            )}
+            {selectedTask.start_date && selectedTask.end_date && (
+              <div className="flex items-center gap-2 text-slate-400 text-sm">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>
+                  Duración: {Math.ceil(
+                    (new Date(selectedTask.end_date).getTime() -
+                      new Date(selectedTask.start_date).getTime()) /
+                      (1000 * 60 * 60 * 24),
+                  )} días
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6">
         <h3 className="text-lg font-semibold ">Comentarios</h3>
