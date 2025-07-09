@@ -6,6 +6,7 @@ import { type TAddMemberSchema } from "../lib/validators";
 import { useProjectStore } from "@/store/project.store";
 import { useAuthStore } from "@/store/auth_store";
 import { EditProjectForm } from "./EditProjectForm";
+import { SkeletonProjectSettings } from "@/components/ui/Skeleton";
 
 interface ProjectSettingsProps {
   projectId: string;
@@ -80,13 +81,7 @@ export const ProjectSettings = (
     
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin h-8 w-8 border-4 border-cyan-500 border-t-transparent rounded-full">
-        </div>
-        <span className="ml-3 text-white">Cargando...</span>
-      </div>
-    );
+    return <SkeletonProjectSettings />;
   }
 
   if (error) {

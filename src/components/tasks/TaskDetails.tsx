@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useTaskStore } from "@/store/task.store";
 import { CreateCommentForm } from "./CreateCommentForm";
 import { EditTaskForm } from "./EditTaskForm";
+import { SkeletonTaskDetails } from "@/components/ui/Skeleton";
 
 export const TaskDetails = () => {
   const { selectedTask, comments, isLoadingTaskDetails } = useTaskStore();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   if (isLoadingTaskDetails || !selectedTask) {
-    return <p className="text-center text-slate-400">Cargando detalles...</p>;
+    return <SkeletonTaskDetails />;
   }
 
   return (

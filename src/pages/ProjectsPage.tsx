@@ -4,6 +4,7 @@ import { useProjectStore } from "@/store/project.store";
 import { useAuthStore } from "@/store/auth_store";
 import { Modal } from "@/components/ui/Modal";
 import { CreateProjectForm } from "@/components/CreateProjectForm";
+import { SkeletonProjectList } from "@/components/ui/Skeleton";
 
 export const ProjectPage = () => {
   const { projects, isLoading, fetchProjects } = useProjectStore();
@@ -33,11 +34,7 @@ export const ProjectPage = () => {
             Crear Proyecto
           </button>
         </div>
-        {isLoading && (
-          <p className="mt-8 text-center text-slate-400">
-            Cargando Proyecto...
-          </p>
-        )}
+        {isLoading && <SkeletonProjectList />}
         {!isLoading && projects.length === 0 && (
           <div className="mt-16 text-center">
             <h3 className="text-xl font-semibold text-white">
@@ -46,16 +43,18 @@ export const ProjectPage = () => {
           </div>
         )}
 
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {projects
-            .map((project, index) => (
-              <ProjectCard
-                key={`${project.id}-${project.name || index}`}
-                project={project}
-                user={user!}
-              />
-            ))}
-        </div>
+        {!isLoading && projects.length > 0 && (
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {projects
+              .map((project, index) => (
+                <ProjectCard
+                  key={`${project.id}-${project.name || index}`}
+                  project={project}
+                  user={user!}
+                />
+              ))}
+          </div>
+        )}
       </div>
 
       <Modal

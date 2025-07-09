@@ -2,6 +2,7 @@ import { useTaskStore } from "@/store/task.store";
 import type { Task } from "../../types/index.types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { TaskUpdatingIndicator } from "@/components/ui/Skeleton";
 
 interface TaskCardProps {
   task: Task;
@@ -21,7 +22,8 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
     id: task.id,
   });
 
-  const { deleteTask } = useTaskStore();
+  const { deleteTask, updatingTasks } = useTaskStore();
+  const isUpdating = updatingTasks.has(task.id);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -117,6 +119,9 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
           </div>
         </div>
       </div>
+      
+      {/* Indicador de actualización */}
+      {isUpdating && <TaskUpdatingIndicator />}
     </div>
   );
 };

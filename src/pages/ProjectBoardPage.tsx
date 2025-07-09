@@ -22,6 +22,7 @@ import { TaskDetails } from "@/components/tasks/TaskDetails";
 import { EditTaskForm } from "@/components/tasks/EditTaskForm";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ProjectSettings } from "@/components/ProjectSettings";
+import { SkeletonTaskBoard } from "@/components/ui/Skeleton";
 
 export const ProjectBoardPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -155,7 +156,7 @@ export const ProjectBoardPage = () => {
     setTaskToEdit(null);
   };
 
-  if (isLoading) return <p className="text-white">Cargando tablero...</p>;
+  if (isLoading) return <SkeletonTaskBoard />;
   if (error) return <p className="text-red-400">Error: {error}</p>;
 
   return (

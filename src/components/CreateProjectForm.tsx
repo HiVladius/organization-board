@@ -97,8 +97,11 @@ export const CreateProjectForm = ({ onSucces }: CreateProjectFormProps) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full justify-center rounded-md bg-cyan-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 disabled:opacity-50 disabled:pointer-events-none"
+          className="flex w-full justify-center items-center gap-2 rounded-md bg-cyan-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 disabled:opacity-50 disabled:pointer-events-none"
         >
+          {isSubmitting && (
+            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+          )}
           {isSubmitting ? "Creando..." : "Crear proyecto"}
         </button>
       </div>
