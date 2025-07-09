@@ -20,9 +20,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   onEndDateToggle,
   className = "",
 }) => {
-  const [activeCalendar, setActiveCalendar] = useState<"start" | "end" | null>(
-    null,
-  );
+  const [activeCalendar, setActiveCalendar] = useState<"start" | "end" | null>( );
   const calendarRef = useRef<HTMLDivElement>(null);
 
   // Cerrar calendario al hacer clic fuera

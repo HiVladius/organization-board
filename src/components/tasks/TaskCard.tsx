@@ -1,8 +1,12 @@
 import { useTaskStore } from "@/store/task.store";
 import type { Task } from "../../types/index.types";
+import { TaskPriority } from "../../types/index.types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { TaskUpdatingIndicator } from "@/components/ui/Skeleton";
+import { getPriorityColors, getPriorityLabel } from "@/utils/getPriorityColors";
+
+
 
 interface TaskCardProps {
   task: Task;
@@ -24,6 +28,7 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
 
   const { deleteTask, updatingTasks } = useTaskStore();
   const isUpdating = updatingTasks.has(task.id);
+  const priorityColors = getPriorityColors(task.priority as TaskPriority);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -56,9 +61,9 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative rounded-md border border-slate-700 bg-slate-800 p-3 shadow-sm hover:bg-slate-700/50 transition-all duration-200 cursor-pointer group ${
+      className={`relative rounded-md border p-3 shadow-sm transition-all duration-200 cursor-pointer group ${priorityColors.bg} ${priorityColors.border} ${priorityColors.hover} ${
         isDragging
-          ? "opacity-50 scale-95 bg-slate-700/30 border-dashed border-slate-500"
+          ? "opacity-50 scale-95 border-dashed"
           : "hover:shadow-lg hover:shadow-slate-900/20"
       }`}
       onClick={handleCardClick}
@@ -117,7 +122,7 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
           </button>
         </div>
 
-        <h4 className="text-sm font-medium text-slate-200 transition-colors duration-200 group-hover:text-white">
+        <h4 className={`text-sm font-medium transition-colors duration-200 ${priorityColors.text}`}>
           {task.title}
         </h4>
 
@@ -177,9 +182,11 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
         )}
 
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-xs text-slate-400 transition-colors duration-200 group-hover:text-slate-300">
-            {task.priority}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${priorityColors.badge}`}>
+              {getPriorityLabel(task.priority as TaskPriority)}
+            </span>
+          </div>
           {/* placeholder para el avatar del asignado */}
           <div className="h-6 w-6 rounded-full bg-slate-600 transition-all duration-200 group-hover:bg-slate-500 group-hover:scale-105">
           </div>

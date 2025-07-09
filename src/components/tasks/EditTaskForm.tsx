@@ -43,8 +43,8 @@ export const EditTaskForm = ({ task, isOpen, onClose }: EditTaskFormProps) => {
         // end_date: endDate ? endDate.toISOString() : undefined,
       });
 
-      // Simular que se guardaron las fechas localmente para la maqueta
-      console.log("📅 Fechas seleccionadas (solo maqueta):", {
+      // Confirmar que las fechas se están guardando correctamente en el estado local
+      console.log("✅ Fechas guardadas en el estado local:", {
         start_date: startDate ? startDate.toISOString() : null,
         end_date: endDate ? endDate.toISOString() : null,
       });

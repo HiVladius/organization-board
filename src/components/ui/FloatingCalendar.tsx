@@ -4,6 +4,7 @@ interface FloatingCalendarProps {
   startDate?: Date;
   endDate?: Date;
   onDateChange: (startDate: Date, endDate?: Date) => void;
+  onDateConfirm: (startDate: Date, enDate?: Date) => void;
   onClose: () => void;
   className?: string;
   style?: React.CSSProperties;
@@ -13,6 +14,7 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
   startDate,
   endDate,
   onDateChange,
+  onDateConfirm,
   onClose,
   className = "",
   style = {},
@@ -90,7 +92,8 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
       setSelectedStartDate(clickedDate);
       setSelectedEndDate(null);
       onDateChange(clickedDate);
-      onClose();
+      // Para fechas únicas, cerrar automáticamente
+      setTimeout(() => onClose(), 100);
     } else {
       // Manejo de rango de fechas
       if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
@@ -132,7 +135,14 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
         onDateChange(selectedStartDate);
       }
     } else {
-      setIsSelectingEnd(false);
+      // Habilitar rango de fechas
+      if (selectedStartDate && !selectedEndDate) {
+        // Si ya hay fecha de inicio pero no final, preparar para seleccionar final
+        setIsSelectingEnd(true);
+      } else {
+        setIsSelectingEnd(false);
+      }
+      
       // Si ya hay una fecha de inicio y final, mantenerlas
       if (selectedStartDate && selectedEndDate) {
         onDateChange(selectedStartDate, selectedEndDate);
@@ -209,6 +219,15 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
 
     return days;
   };
+
+  const handleConfirm = () => {
+    if (selectedStartDate){
+      if(onDateConfirm){
+        onDateConfirm(selectedStartDate, selectedEndDate || undefined);
+      }
+      onClose();
+    }
+  }
 
   return (
     <div
@@ -453,6 +472,18 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
               </>
             )}
           </div>
+          
+          {/* Botón de confirmación para rangos de fechas */}
+          {hasDateRange && selectedStartDate && selectedEndDate && (
+            <div className="mt-3 pt-3 border-t border-slate-600">
+              <button
+                onClick={handleConfirm}
+                className="w-full py-2 px-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              >
+                Confirmar Selección
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

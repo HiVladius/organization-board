@@ -50,7 +50,14 @@ export const DateField: React.FC<DateFieldProps> = ({
 
     const handleDateChange = (newStartDate: Date, newEndDate?: Date) => {
         onDateChange(newStartDate, newEndDate);
-        setShowCalendar(false);
+        
+        // Solo cerrar automáticamente si no hay endDate (modo fecha única)
+        // En modo rango, el calendario debe permanecer abierto hasta que el usuario haga clic fuera
+        if (!endDate && !newEndDate) {
+            // Es una fecha única, cerrar
+            setShowCalendar(false);
+        }
+        // En cualquier otro caso (modo rango), mantener el calendario abierto
     };
 
     const handleClose = () => {

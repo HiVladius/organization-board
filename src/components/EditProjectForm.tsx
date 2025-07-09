@@ -6,11 +6,11 @@ import { Modal } from "@/components/ui/Modal";
 interface EditProjectFormProps {
   project: Project;
   isOpen: boolean;
-  onClose: () => void;
+  // onClose: () => void;
 }
 
 export const EditProjectForm = (
-  { project, isOpen, onClose }: EditProjectFormProps,
+  { project, isOpen, /*onClose*/ }: EditProjectFormProps,
 ) => {
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description || "");
@@ -37,7 +37,7 @@ export const EditProjectForm = (
         key: projectKey.trim().toUpperCase(), // Cambiar de project_key a key
       });
 
-      onClose();
+      // onClose();
     } catch (error) {
       console.error("Error al actualizar el proyecto:", error);
       alert("Error al actualizar el proyecto");
@@ -51,7 +51,7 @@ export const EditProjectForm = (
     setName(project.name);
     setDescription(project.description || "");
     setProjectKey(project.project_key);
-    onClose();
+    // onClose();
   };
 
   const handleKeyChange = (value: string) => {

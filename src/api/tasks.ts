@@ -2,10 +2,12 @@ import apiClient from "./index.api";
 import type { Comment, Task } from "../types/index.types";
 
 export const getTaskByProjectId = async (
-  projectId: string,
+  projectId: string
 ): Promise<Task[]> => {
   if (
-    !projectId || projectId === "undefined" || projectId === "[object Object]"
+    !projectId ||
+    projectId === "undefined" ||
+    projectId === "[object Object]"
   ) {
     throw new Error("Project ID is required and must be a valid string");
   }
@@ -23,7 +25,7 @@ export const getTaskById = async (taskId: string): Promise<Task> => {
 };
 
 export const getCommentsByTaskId = async (
-  taskId: string,
+  taskId: string
 ): Promise<Comment[]> => {
   const response = await apiClient.get<Comment[]>(`/tasks/${taskId}/comments`);
   return response.data;
@@ -32,7 +34,7 @@ export const getCommentsByTaskId = async (
 export const createTask = async (
   projectId: string,
   title: string,
-  status: string = "ToDo",
+  status: string = "ToDo"
 ): Promise<Task> => {
   const response = await apiClient.post<Task>(`/projects/${projectId}/tasks`, {
     title,
@@ -54,8 +56,14 @@ export const updateTask = async (
     status?: string;
     priority?: string;
     assignee_id?: string;
-  },
+  }
 ): Promise<Task> => {
   const response = await apiClient.patch(`/tasks/${taskId}`, updates);
+  return response.data;
+};
+
+export const updateDateTask = async (task_id:string):Promise<Task> => {
+  const response = await apiClient.post(`/api/tasks/${task_id}/date-range`);
+
   return response.data;
 };
