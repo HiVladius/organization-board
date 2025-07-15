@@ -63,4 +63,15 @@ export interface Comment {
   updated_at: string;
 }
 
+export interface TaskDateRange {
+  task_id: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface TaskWithDateRange {
+  task: Task;
+  date_range?: TaskDateRange;
+}
+
 export {};

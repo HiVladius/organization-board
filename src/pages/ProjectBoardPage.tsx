@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import _React, { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   DndContext,
   DragOverlay,
@@ -22,7 +22,8 @@ import { TaskDetails } from "@/components/tasks/TaskDetails";
 import { EditTaskForm } from "@/components/tasks/EditTaskForm";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ProjectSettings } from "@/components/ProjectSettings";
-import { SkeletonTaskBoard } from "@/components/ui/Skeleton";
+import { Skeleton, SkeletonTaskBoard } from "@/components/ui/Skeleton";
+import { useProjectStore } from "@/store/project.store";
 
 export const ProjectBoardPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -35,6 +36,7 @@ export const ProjectBoardPage = () => {
     fetchTaskById,
     clearSelectedTask,
   } = useTaskStore();
+  const { fetchProjectById, selectedProject } = useProjectStore();
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
   const [isSettingsSidebarOpen, setSettingsSidebarOpen] = useState(false);
   const [isEditTaskModalOpen, setEditTaskModalOpen] = useState(false);
@@ -65,12 +67,13 @@ export const ProjectBoardPage = () => {
   useEffect(() => {
     if (projectId) {
       fetchTasks(projectId);
+      fetchProjectById(projectId); // Cargar los datos del proyecto
     } else {
       console.error(
         "No se pudo obtener el projectId desde los parámetros de la URL.",
       );
     }
-  }, [projectId, fetchTasks]);
+  }, [projectId, fetchTasks, fetchProjectById]);
 
   const columns = useMemo(() => {
     const result = {
@@ -171,7 +174,16 @@ export const ProjectBoardPage = () => {
       >
         <div className="flex h-full flex-col">
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-white">Tablero Kanban</h1>
+            {selectedProject?.name
+              ? (
+                <Link
+                  to="/board"
+                  className="text-2xl font-bold text-white hover:text-cyan-400 transition-colors duration-200 cursor-pointer"
+                >
+                  {selectedProject.name}
+                </Link>
+              )
+              : <Skeleton className="h-8 w-48" />}
             <button
               onClick={() => setSettingsSidebarOpen(true)}
               className="flex items-center gap-2 rounded-md bg-slate-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-600 transition-colors duration-200"

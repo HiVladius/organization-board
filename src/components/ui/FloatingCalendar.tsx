@@ -142,7 +142,7 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
       } else {
         setIsSelectingEnd(false);
       }
-      
+
       // Si ya hay una fecha de inicio y final, mantenerlas
       if (selectedStartDate && selectedEndDate) {
         onDateChange(selectedStartDate, selectedEndDate);
@@ -221,13 +221,13 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
   };
 
   const handleConfirm = () => {
-    if (selectedStartDate){
-      if(onDateConfirm){
+    if (selectedStartDate) {
+      if (onDateConfirm) {
         onDateConfirm(selectedStartDate, selectedEndDate || undefined);
       }
       onClose();
     }
-  }
+  };
 
   return (
     <div
@@ -472,7 +472,7 @@ export const FloatingCalendar: React.FC<FloatingCalendarProps> = ({
               </>
             )}
           </div>
-          
+
           {/* Botón de confirmación para rangos de fechas */}
           {hasDateRange && selectedStartDate && selectedEndDate && (
             <div className="mt-3 pt-3 border-t border-slate-600">

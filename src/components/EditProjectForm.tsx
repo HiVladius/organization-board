@@ -10,7 +10,7 @@ interface EditProjectFormProps {
 }
 
 export const EditProjectForm = (
-  { project, isOpen, /*onClose*/ }: EditProjectFormProps,
+  { project, isOpen /*onClose*/ }: EditProjectFormProps,
 ) => {
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description || "");

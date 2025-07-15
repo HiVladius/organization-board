@@ -6,8 +6,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { TaskUpdatingIndicator } from "@/components/ui/Skeleton";
 import { getPriorityColors, getPriorityLabel } from "@/utils/getPriorityColors";
 
-
-
 interface TaskCardProps {
   task: Task;
   onTaskClick?: (taskId: string) => void;
@@ -122,7 +120,9 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
           </button>
         </div>
 
-        <h4 className={`text-sm font-medium transition-colors duration-200 ${priorityColors.text}`}>
+        <h4
+          className={`text-sm font-medium transition-colors duration-200 ${priorityColors.text}`}
+        >
           {task.title}
         </h4>
 
@@ -183,7 +183,9 @@ export const TaskCard = ({ task, onTaskClick, onEditTask }: TaskCardProps) => {
 
         <div className="mt-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${priorityColors.badge}`}>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium text-white ${priorityColors.badge}`}
+            >
               {getPriorityLabel(task.priority as TaskPriority)}
             </span>
           </div>
