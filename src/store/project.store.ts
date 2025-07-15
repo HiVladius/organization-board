@@ -2,10 +2,10 @@ import { create } from "zustand";
 import {
   createProject,
   type CreateProjectPayload,
+  deleteProject,
   getProjects,
   updateProject,
   type UpdateProjectPayload,
-  deleteProject,
 } from "@/api/projects";
 
 import type { Project, User } from "@/types/index.types";
@@ -26,7 +26,7 @@ interface ProjectState {
   createNewProject: (data: CreateProjectPayload) => Promise<void>;
   updateProject: (
     projectId: string,
-    data: UpdateProjectPayload
+    data: UpdateProjectPayload,
   ) => Promise<void>;
   fetchProjectById: (projectId: string) => Promise<void>;
   fetchMembers: (projectId: string) => Promise<void>;
@@ -51,10 +51,9 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       set((state) => ({
         projects: state.projects.filter((project) => project.id !== projectId),
         // Si el proyecto eliminado era el seleccionado, limpiarlo
-        selectedProject:
-          state.selectedProject?.id === projectId
-            ? null
-            : state.selectedProject,
+        selectedProject: state.selectedProject?.id === projectId
+          ? null
+          : state.selectedProject,
         // Limpiar miembros si el proyecto eliminado era el seleccionado
         members: state.selectedProject?.id === projectId ? [] : state.members,
         isLoading: false,
@@ -350,8 +349,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       const updatedProject = await updateProject(projectId, data);
 
       // Normalizar el ID del proyecto actualizado
-      const normalizedProjectId =
-        updatedProject.id || (updatedProject as any)._id;
+      const normalizedProjectId = updatedProject.id ||
+        (updatedProject as any)._id;
       const projectWithId = {
         ...updatedProject,
         id: normalizedProjectId,
@@ -362,10 +361,9 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         projects: state.projects.map((project) =>
           project.id === projectId ? projectWithId : project
         ),
-        selectedProject:
-          state.selectedProject?.id === projectId
-            ? projectWithId
-            : state.selectedProject,
+        selectedProject: state.selectedProject?.id === projectId
+          ? projectWithId
+          : state.selectedProject,
       }));
     } catch (error) {
       console.error("Error al actualizar el proyecto:", error);

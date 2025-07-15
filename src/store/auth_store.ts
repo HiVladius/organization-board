@@ -82,13 +82,23 @@ export const useAuthStore = create<AuthState>()(
         localStorage.setItem("authToken", token);
 
         // Actualizamos el estado de la aplicación
-        set({ user: normalizedUser, token, isAuthenticated: true, isInitialized: true });
+        set({
+          user: normalizedUser,
+          token,
+          isAuthenticated: true,
+          isInitialized: true,
+        });
       },
 
       // Acción de Logout
       logout: () => {
         localStorage.removeItem("authToken");
-        set({ user: null, token: null, isAuthenticated: false, isInitialized: true });
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isInitialized: true,
+        });
       },
     }),
     {

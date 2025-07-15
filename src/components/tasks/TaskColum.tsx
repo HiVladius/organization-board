@@ -56,10 +56,10 @@ export const TaskColum = (
               strategy={verticalListSortingStrategy}
             >
               {validTasks.map((task) => (
-                <TaskCard 
-                  key={task.id} 
-                  task={task} 
-                  onTaskClick={onTaskClick} 
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onTaskClick={onTaskClick}
                   onEditTask={onEditTask}
                 />
               ))}

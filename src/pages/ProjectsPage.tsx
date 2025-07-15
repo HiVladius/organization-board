@@ -11,7 +11,6 @@ export const ProjectPage = () => {
   const { user } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);

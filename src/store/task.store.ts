@@ -226,14 +226,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     try {
       const updatedTask = await updateTask(taskId, updates);
       const normalizedTask = normalizeMongoTask(updatedTask);
-      
+
       set((state) => ({
         ...state,
         tasks: state.tasks.map((task) =>
           task.id === normalizedTask.id ? normalizedTask : task
         ),
-        selectedTask: state.selectedTask?.id === normalizedTask.id 
-          ? normalizedTask 
+        selectedTask: state.selectedTask?.id === normalizedTask.id
+          ? normalizedTask
           : state.selectedTask,
       }));
     } catch (error) {

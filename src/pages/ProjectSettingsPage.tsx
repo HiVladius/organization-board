@@ -79,9 +79,14 @@ export const ProjectSettingsPage = () => {
   console.log("DEBUG - Project Owner ID:", selectedProject?.owner_id);
   console.log("DEBUG - Is Owner?:", isOwner);
   console.log("DEBUG - Type of Current User ID:", typeof currentUser?.id);
-  console.log("DEBUG - Type of Project Owner ID:", typeof selectedProject?.owner_id);
+  console.log(
+    "DEBUG - Type of Project Owner ID:",
+    typeof selectedProject?.owner_id,
+  );
 
-  if (isLoading) return <SkeletonSpinner text="Cargando configuración del proyecto..." />;
+  if (isLoading) {
+    return <SkeletonSpinner text="Cargando configuración del proyecto..." />;
+  }
 
   if (error) return <p className="text-red-400">Error: {error}</p>;
 
@@ -99,14 +104,18 @@ export const ProjectSettingsPage = () => {
           <p className="text-slate-400 mt-2">
             Gestion de miembros y configuraciones de proyecto
           </p>
-          
+
           {/* DEBUG TEMPORAL - Eliminar después */}
           <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-500/50 rounded-md text-yellow-200 text-sm">
-            <strong>DEBUG INFO:</strong><br/>
-            Current User ID: {currentUser?.id || 'null'}<br/>
-            Project Owner ID: {selectedProject?.owner_id || 'null'}<br/>
-            Is Owner: {isOwner ? 'true' : 'false'}<br/>
-            Current User: {currentUser?.username || 'N/A'}
+            <strong>DEBUG INFO:</strong>
+            <br />
+            Current User ID: {currentUser?.id || "null"}
+            <br />
+            Project Owner ID: {selectedProject?.owner_id || "null"}
+            <br />
+            Is Owner: {isOwner ? "true" : "false"}
+            <br />
+            Current User: {currentUser?.username || "N/A"}
           </div>
         </div>
 

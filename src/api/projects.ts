@@ -10,7 +10,7 @@ export type CreateProjectPayload = {
 export type UpdateProjectPayload = {
   name?: string;
   description?: string;
-  key?: string; 
+  key?: string;
 };
 
 export const getProjects = async (): Promise<Project[]> => {
@@ -36,4 +36,4 @@ export const updateProject = async (
 export const deleteProject = async (projectId: string): Promise<Project> => {
   const response = await apiClient.delete(`/projects/${projectId}`);
   return response.data;
-}
+};
