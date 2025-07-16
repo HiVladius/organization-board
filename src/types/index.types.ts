@@ -2,6 +2,13 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  avatar?: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  role?: string;
+  created_at?: string;
+  projects?: string[]; // IDs de proyectos en los que participa
 }
 
 export interface Project {

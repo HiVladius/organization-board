@@ -2,12 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import apiClient from "../api/index.api";
 import type { TLoginSchema } from "../lib/validators";
+import type { User } from "../types/index.types";
 
-interface User {
-  id: string;
-  username: string;
-  email: string;
-}
 interface AuthState {
   user: User | null;
   token: string | null;

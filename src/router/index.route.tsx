@@ -4,6 +4,7 @@ import { AuthGuard } from "./AuthGuard";
 import { AppLayout } from "../components/layout/AppLayout";
 import { ProjectPage } from "../pages/ProjectsPage";
 import { ProjectBoardPage } from "../pages/ProjectBoardPage";
+import { UserProfilePage } from "../pages/UserProfilePage";
 // import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage"; // Ya no es necesario como página separada
 // import { Testpage } from "../pages/test.page";
 
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: "/project/:projectId",
         element: <ProjectBoardPage />,
+      },
+      {
+        path: "/profile",
+        element: <UserProfilePage />,
       },
     ],
   },
