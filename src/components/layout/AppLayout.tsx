@@ -1,9 +1,9 @@
-import { Outlet, useNavigate, Link } from "react-router";
+import { Link, Outlet, useNavigate } from "react-router";
 import { useState } from "react";
-import { useAuthStore } from "../../store/auth_store";
+import { useAuthStore } from "@/store/auth_store";
 import { UserProfile } from "../UserProfile";
 import { UserAvatar } from "../ui/UserAvatar";
-import { ChevronDown, User, LogOut, Eye } from "lucide-react";
+import { ChevronDown, Eye, LogOut, User } from "lucide-react";
 
 export const AppLayout = () => {
   const { user, logout } = useAuthStore();
@@ -21,7 +21,10 @@ export const AppLayout = () => {
   return (
     <div className="flex h-screen bg-slate-900 text-white">
       <aside className="w-64 flex-shrink-0 bg-slate-800 p-4">
-        <Link to="/board" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <Link
+          to="/board"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        >
           <div className="h-8 w-8 rounded-full bg-cyan-500" />
           <h1 className="text-xl font-bold">Conexions</h1>
         </Link>
@@ -34,7 +37,7 @@ export const AppLayout = () => {
           </ul>
         </nav>
       </aside>
-      
+
       <div className="flex flex-1 flex-col">
         <header className="flex h-16 flex-shrink-0 items-center justify-end border-b border-slate-700 bg-slate-800 px-6">
           <div className="relative">
@@ -45,16 +48,17 @@ export const AppLayout = () => {
               <UserAvatar user={user} size="md" />
               <div className="text-left">
                 <div className="text-sm font-medium">
-                  {user.firstName && user.lastName 
+                  {user.firstName && user.lastName
                     ? `${user.firstName} ${user.lastName}`
-                    : user.username
-                  }
+                    : user.username}
                 </div>
                 <div className="text-xs text-gray-400">@{user.username}</div>
               </div>
-              <ChevronDown 
-                size={16} 
-                className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${
+                  isDropdownOpen ? "rotate-180" : ""
+                }`}
               />
             </button>
 
@@ -92,22 +96,22 @@ export const AppLayout = () => {
             )}
           </div>
         </header>
-        
+
         <main className="flex-1 overflow-y-auto p-6 bg-slate-900">
           <Outlet />
         </main>
       </div>
 
       {/* Modal de perfil de usuario */}
-      <UserProfile 
-        isOpen={isProfileOpen} 
-        onClose={() => setIsProfileOpen(false)} 
+      <UserProfile
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
       />
 
       {/* Cerrar dropdown al hacer clic fuera */}
       {isDropdownOpen && (
-        <div 
-          className="fixed inset-0 z-30" 
+        <div
+          className="fixed inset-0 z-30"
           onClick={() => setIsDropdownOpen(false)}
         />
       )}

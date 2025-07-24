@@ -6,5 +6,7 @@ import { JiraCloneFrond } from "./JiraCloneFrond";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
-  <JiraCloneFrond />,
+  <StrictMode>
+    <JiraCloneFrond />
+  </StrictMode>,
 );
