@@ -59,17 +59,4 @@ export const getUserProjects = async (): Promise<any[]> => {
   return response.data;
 };
 
-/**
- * Obtiene las estadísticas del usuario
- */
-export const getUserStats = async (): Promise<{
-  totalProjects: number;
-  ownedProjects: number;
-  memberProjects: number;
-  totalTasks: number;
-  completedTasks: number;
-  pendingTasks: number;
-}> => {
-  const response = await apiClient.get("/user/stats");
-  return response.data;
-};
+

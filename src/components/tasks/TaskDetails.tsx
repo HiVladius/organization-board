@@ -4,6 +4,34 @@ import { CreateCommentForm } from "./CreateCommentForm";
 import { EditTaskForm } from "./EditTaskForm";
 import { SkeletonTaskDetails } from "@/components/ui/Skeleton";
 
+// Función para renderizar markdown básico con imágenes
+const renderMarkdown = (content: string) => {
+  const parts = content.split(/(\!\[.*?\]\(.*?\))/g);
+  
+  return parts.map((part, index) => {
+    // Verificar si es una imagen en formato markdown
+    const imageMatch = part.match(/\!\[(.*?)\]\((.*?)\)/);
+    if (imageMatch) {
+      const [, alt, src] = imageMatch;
+      return (
+        <img
+          key={index}
+          src={src}
+          alt={alt}
+          className="max-w-xs h-auto rounded-md border border-white/10 my-2"
+          style={{ maxHeight: '200px' }}
+        />
+      );
+    }
+    // Si no es una imagen, renderizar como texto normal
+    return part ? (
+      <span key={index} style={{ whiteSpace: 'pre-wrap' }}>
+        {part}
+      </span>
+    ) : null;
+  });
+};
+
 export const TaskDetails = () => {
   const { selectedTask, comments, isLoadingTaskDetails } = useTaskStore();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -128,7 +156,9 @@ export const TaskDetails = () => {
           {comments.map((coment) => (
             <div key={coment.id} className="p-3 bg-slate-800 rounded-md">
               <p className="text-sm text-slate-400">{coment.author.username}</p>
-              <p className="mt-1 text-slate-300">{coment.content}</p>
+              <div className="mt-1 text-slate-300">
+                {renderMarkdown(coment.content)}
+              </div>
             </div>
           ))}
           {comments.length === 0 && (

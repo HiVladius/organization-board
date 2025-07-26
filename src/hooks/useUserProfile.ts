@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { useAuthStore } from "../store/auth_store";
 import {
   deleteUserAvatar,
-  getUserStats,
   updateUserAvatar,
   updateUserProfile,
 } from "../api/user";
@@ -76,23 +75,7 @@ export const useUserProfile = () => {
     }
   }, [user, setUser]);
 
-  const getStats = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
 
-    try {
-      const stats = await getUserStats();
-      return stats;
-    } catch (err) {
-      const errorMessage = err instanceof Error
-        ? err.message
-        : "Error al cargar las estadísticas";
-      setError(errorMessage);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const validateImageFile = useCallback(
     (file: File): { isValid: boolean; error?: string } => {
@@ -151,7 +134,6 @@ export const useUserProfile = () => {
     updateProfile,
     updateAvatar,
     removeAvatar,
-    getStats,
     validateImageFile,
     processImageFile,
     clearError: () => setError(null),

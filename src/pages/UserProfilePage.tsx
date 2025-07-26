@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAuthStore } from "../store/auth_store";
 import { useProjectStore } from "../store/project.store";
 import { UserAvatar } from "../components/ui/UserAvatar";
-import { getUserStats, updateUserProfile } from "../api/user";
+import { updateUserProfile } from "../api/user";
 import {
-  Activity,
   Briefcase,
   Calendar,
-  CheckCircle,
-  Clock,
   Edit3,
   Mail,
   Star,
@@ -20,15 +17,6 @@ export const UserProfilePage: React.FC = () => {
   const { user, setUser } = useAuthStore();
   const { projects } = useProjectStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [_loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalProjects: 0,
-    ownedProjects: 0,
-    memberProjects: 0,
-    totalTasks: 0,
-    completedTasks: 0,
-    pendingTasks: 0,
-  });
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "",
@@ -37,23 +25,6 @@ export const UserProfilePage: React.FC = () => {
     bio: user?.bio || "",
     role: user?.role || "Usuario",
   });
-
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  const loadUserData = async () => {
-    try {
-      setLoading(true);
-      // Aquí podrías cargar datos adicionales del usuario
-      const userStats = await getUserStats();
-      setStats(userStats);
-    } catch (error) {
-      console.error("Error cargando datos del usuario:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -88,6 +59,14 @@ export const UserProfilePage: React.FC = () => {
   const userProjects = projects.filter((project) =>
     project.members.includes(user?.id || "") || project.owner_id === user?.id
   );
+
+  // Calcular estadísticas locales basadas en los proyectos disponibles
+  const localStats = {
+    totalProjects: userProjects.length,
+    ownedProjects: userProjects.filter((p) => p.owner_id === user?.id).length,
+    memberProjects: userProjects.filter((p) => p.owner_id !== user?.id).length,
+    totalCollaborators: userProjects.reduce((acc, p) => acc + p.members.length, 0),
+  };
 
   if (!user) return null;
 
@@ -139,10 +118,10 @@ export const UserProfilePage: React.FC = () => {
       </div>
 
       {/* Estadísticas */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-slate-800 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-cyan-500 mb-1">
-            {stats.totalProjects}
+            {localStats.totalProjects}
           </div>
           <div className="text-sm text-gray-400 flex items-center justify-center gap-1">
             <Users size={14} />
@@ -152,7 +131,7 @@ export const UserProfilePage: React.FC = () => {
 
         <div className="bg-slate-800 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-green-500 mb-1">
-            {stats.ownedProjects}
+            {localStats.ownedProjects}
           </div>
           <div className="text-sm text-gray-400 flex items-center justify-center gap-1">
             <Star size={14} />
@@ -162,7 +141,7 @@ export const UserProfilePage: React.FC = () => {
 
         <div className="bg-slate-800 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-blue-500 mb-1">
-            {stats.memberProjects}
+            {localStats.memberProjects}
           </div>
           <div className="text-sm text-gray-400 flex items-center justify-center gap-1">
             <Users size={14} />
@@ -172,31 +151,11 @@ export const UserProfilePage: React.FC = () => {
 
         <div className="bg-slate-800 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-purple-500 mb-1">
-            {stats.totalTasks}
+            {localStats.totalCollaborators}
           </div>
           <div className="text-sm text-gray-400 flex items-center justify-center gap-1">
-            <Activity size={14} />
-            Tareas Total
-          </div>
-        </div>
-
-        <div className="bg-slate-800 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-green-400 mb-1">
-            {stats.completedTasks}
-          </div>
-          <div className="text-sm text-gray-400 flex items-center justify-center gap-1">
-            <CheckCircle size={14} />
-            Completadas
-          </div>
-        </div>
-
-        <div className="bg-slate-800 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-orange-500 mb-1">
-            {stats.pendingTasks}
-          </div>
-          <div className="text-sm text-gray-400 flex items-center justify-center gap-1">
-            <Clock size={14} />
-            Pendientes
+            <Users size={14} />
+            Colaboradores
           </div>
         </div>
       </div>
