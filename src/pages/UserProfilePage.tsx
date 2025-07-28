@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useAuthStore } from '../store/auth_store';
-import { useProjectStore } from '../store/project.store';
-import { UserAvatar } from '../components/ui/UserAvatar';
-import {  updateUserProfile, getUserStats } from '../api/user';
+import { useAuthStore } from '@/store/auth_store';
+import { useProjectStore } from '@/store/project.store';
+import { UserAvatar } from '@/components/ui/UserAvatar';
+import {  updateUserProfile, getUserStats } from '@/api/user';
 import { 
   Edit3, 
   Users, 

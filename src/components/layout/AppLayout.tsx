@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, Link } from "react-router";
 import { useState } from "react";
-import { useAuthStore } from "../../store/auth_store";
+import { useAuthStore } from "@/store/auth_store";
 import { UserProfile } from "../UserProfile";
 import { UserAvatar } from "../ui/UserAvatar";
 import { ChevronDown, User, LogOut, Eye } from "lucide-react";

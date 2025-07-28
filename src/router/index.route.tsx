@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { LoginPages } from "../pages/LoginPages";
+import { LoginPages } from "@/pages/LoginPages";
 import { AuthGuard } from "./AuthGuard";
-import { AppLayout } from "../components/layout/AppLayout";
-import { ProjectPage } from "../pages/ProjectsPage";
-import { ProjectBoardPage } from "../pages/ProjectBoardPage";
-import { UserProfilePage } from "../pages/UserProfilePage";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { ProjectPage } from "@/pages/ProjectsPage";
+import { ProjectBoardPage } from "@/pages/ProjectBoardPage";
+import { UserProfilePage } from "@/pages/UserProfilePage";
 // import { ProjectSettingsPage } from "@/pages/ProjectSettingsPage"; // Ya no es necesario como página separada
 // import { Testpage } from "../pages/test.page";
 

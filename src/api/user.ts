@@ -1,5 +1,5 @@
 import apiClient from './index.api';
-import type { User } from '../types/index.types';
+import type { User } from '@/types/index.types';
 
 export interface UpdateUserProfileRequest {
   username?: string;

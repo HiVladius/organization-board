@@ -1,5 +1,5 @@
 import React from 'react';
-import type { User } from '../../types/index.types';
+import type { User } from '@/types/index.types';
 
 interface UserAvatarProps {
   user: User;
@@ -21,6 +21,8 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   className = '',
   showTooltip = false
 }) => {
+
+
   const getInitials = (username: string) => {
     return username.charAt(0).toUpperCase();
   };

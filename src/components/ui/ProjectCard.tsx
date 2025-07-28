@@ -84,6 +84,7 @@ export const ProjectCard = ({ project, user }: ProjectCardProps) => {
       <EditProjectForm
         project={project}
         isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
       />
     </>
   );

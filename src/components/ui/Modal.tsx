@@ -7,9 +7,18 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
-export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) => {
+  const sizeClasses = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    '2xl': 'max-w-4xl'
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       {/* El componente Dialog ahora recibe 'open' y 'onClose' directamente */}
@@ -46,7 +55,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               {/* Ya no se usa Dialog.Panel, simplemente se renderiza un div con los estilos */}
-              <div className="w-full max-w-md transform overflow-hidden rounded-2xl bg-slate-800 p-6 text-left align-middle shadow-xl transition-all">
+              <div className={`w-full ${sizeClasses[size]} transform overflow-hidden rounded-2xl bg-slate-800 p-6 text-left align-middle shadow-xl transition-all`}>
                 {/* Ya no se usa Dialog.Title, se usa un <h3> normal y se conecta con `aria-labelledby` para accesibilidad */}
                 <h3 className="text-lg font-medium leading-6 text-white">
                   {title}
