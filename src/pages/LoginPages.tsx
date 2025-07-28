@@ -2,7 +2,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 
-
 import { loginSchema } from "../lib/validators";
 import type { TLoginSchema } from "../lib/validators";
 import { useAuthStore } from "../store/auth_store";
@@ -40,7 +39,6 @@ export const LoginPages = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 px-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          
           <h1 className="text-4xl font-bold tracking-tight text-white">
             Conexions {/*Nombre alternativo */}
           </h1>

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { useProjectStore } from '@/store/project.store';
-import { useUserProfile } from '@/hooks/useUserProfile';
+import { useProjectStore } from '../store/project.store';
+import { useUserProfile } from '../hooks/useUserProfile';
 import { Modal } from './ui/Modal';
 import { Camera, Edit3, Users, Calendar, Mail, User as UserIcon, Trash2 } from 'lucide-react';
 
@@ -9,24 +9,33 @@ interface UserProfileProps {
   onClose: () => void;
 }
 
-export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => {
-  const { user, updateProfile, updateAvatar, removeAvatar, processImageFile, isLoading } = useUserProfile();
+export const UserProfile: React.FC<UserProfileProps> = (
+  { isOpen, onClose },
+) => {
+  const {
+    user,
+    updateProfile,
+    updateAvatar,
+    removeAvatar,
+    processImageFile,
+    isLoading,
+  } = useUserProfile();
   const { projects } = useProjectStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [avatar, setAvatar] = useState(user?.avatar || '');
+  const [avatar, setAvatar] = useState(user?.avatar || "");
   const [formData, setFormData] = useState({
-    username: user?.username || '',
-    email: user?.email || '',
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    bio: user?.bio || '',
-    role: user?.role || 'Usuario'
+    username: user?.username || "",
+    email: user?.email || "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    bio: user?.bio || "",
+    role: user?.role || "Usuario",
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filtrar proyectos donde el usuario es miembro o propietario
-  const userProjects = projects.filter(project => 
-    project.members.includes(user?.id || '') || project.owner_id === user?.id
+  const userProjects = projects.filter((project) =>
+    project.members.includes(user?.id || "") || project.owner_id === user?.id
   );
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,31 +45,35 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
     try {
       const base64Avatar = await processImageFile(file);
       setAvatar(base64Avatar);
-      
+
       // Si no estamos en modo edición, actualizar inmediatamente
       if (!isEditing) {
         await updateAvatar(base64Avatar);
       }
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Error al procesar la imagen');
+      alert(
+        error instanceof Error ? error.message : "Error al procesar la imagen",
+      );
     }
   };
 
   const handleRemoveAvatar = async () => {
     try {
-      setAvatar('');
+      setAvatar("");
       if (!isEditing) {
         await removeAvatar();
       }
     } catch (error) {
-      alert('Error al eliminar el avatar');
+      alert("Error al eliminar el avatar");
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -68,7 +81,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
     try {
       // Actualizar el perfil
       await updateProfile(formData);
-      
+
       // Si hay un nuevo avatar, actualizarlo
       if (avatar !== user?.avatar) {
         if (avatar) {
@@ -77,11 +90,11 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
           await removeAvatar();
         }
       }
-      
+
       setIsEditing(false);
     } catch (error) {
-      console.error('Error al actualizar perfil:', error);
-      alert('Error al actualizar el perfil');
+      console.error("Error al actualizar perfil:", error);
+      alert("Error al actualizar el perfil");
     }
   };
 
@@ -90,34 +103,36 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
   };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'No disponible';
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    if (!dateString) return "No disponible";
+    return new Date(dateString).toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   if (!user) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Perfil de Usuario" size="2xl">
-      <div className="max-w-4xl mx-auto p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+    <Modal isOpen={isOpen} onClose={onClose} title="Perfil de Usuario">
+      <div className="max-w-2xl mx-auto p-6 space-y-6">
         {/* Header del perfil */}
         <div className="text-center">
           <div className="relative inline-block">
-            {avatar ? (
-              <img
-                src={avatar}
-                alt="Avatar"
-                className="w-24 h-24 rounded-full object-cover border-4 border-cyan-500"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
-                {getInitials(user.username)}
-              </div>
-            )}
-            
+            {avatar
+              ? (
+                <img
+                  src={avatar}
+                  alt="Avatar"
+                  className="w-24 h-24 rounded-full object-cover border-4 border-cyan-500"
+                />
+              )
+              : (
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+                  {getInitials(user.username)}
+                </div>
+              )}
+
             {isEditing && (
               <div className="absolute -bottom-2 -right-2 flex gap-1">
                 <button
@@ -140,7 +155,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
                 )}
               </div>
             )}
-            
+
             <input
               ref={fileInputRef}
               type="file"
@@ -150,13 +165,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
               disabled={isLoading}
             />
           </div>
-          
+
           <div className="mt-4">
             <h2 className="text-2xl font-bold text-white">
-              {formData.firstName && formData.lastName 
+              {formData.firstName && formData.lastName
                 ? `${formData.firstName} ${formData.lastName}`
-                : formData.username
-              }
+                : formData.username}
             </h2>
             <p className="text-gray-400">@{formData.username}</p>
             <p className="text-sm text-gray-500">ID: {user.id}</p>
@@ -165,44 +179,46 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
 
         {/* Botón de edición */}
         <div className="flex justify-center">
-          {!isEditing ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors"
-              disabled={isLoading}
-            >
-              <Edit3 size={16} />
-              Editar Perfil
-            </button>
-          ) : (
-            <div className="flex gap-2">
+          {!isEditing
+            ? (
               <button
-                onClick={handleSave}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors"
                 disabled={isLoading}
               >
-                {isLoading ? 'Guardando...' : 'Guardar'}
+                <Edit3 size={16} />
+                Editar Perfil
               </button>
-              <button
-                onClick={() => {
-                  setIsEditing(false);
-                  setFormData({
-                    username: user?.username || '',
-                    email: user?.email || '',
-                    firstName: user?.firstName || '',
-                    lastName: user?.lastName || '',
-                    bio: user?.bio || '',
-                    role: user?.role || 'Usuario'
-                  });
-                  setAvatar(user?.avatar || '');
-                }}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
-                disabled={isLoading}
-              >
-                Cancelar
-              </button>
-            </div>
-          )}
+            )
+            : (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSave}
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Guardando..." : "Guardar"}
+                </button>
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    setFormData({
+                      username: user?.username || "",
+                      email: user?.email || "",
+                      firstName: user?.firstName || "",
+                      lastName: user?.lastName || "",
+                      bio: user?.bio || "",
+                      role: user?.role || "Usuario",
+                    });
+                    setAvatar(user?.avatar || "");
+                  }}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+                  disabled={isLoading}
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
         </div>
 
         {/* Información del usuario */}
@@ -212,7 +228,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
             Información Personal
           </h3>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">
                 Nombre de Usuario
@@ -227,7 +243,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
                   disabled={isLoading}
                 />
               ) : (
-                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg break-words">{formData.username}</p>
+                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg">{formData.username}</p>
               )}
             </div>
 
@@ -246,7 +262,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
                   disabled={isLoading}
                 />
               ) : (
-                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg break-all text-sm">{formData.email}</p>
+                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg">{formData.email}</p>
               )}
             </div>
 
@@ -265,7 +281,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
                   disabled={isLoading}
                 />
               ) : (
-                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg break-words">
+                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg">
                   {formData.firstName || 'No especificado'}
                 </p>
               )}
@@ -286,7 +302,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
                   disabled={isLoading}
                 />
               ) : (
-                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg break-words">
+                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg">
                   {formData.lastName || 'No especificado'}
                 </p>
               )}
@@ -307,7 +323,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
                   disabled={isLoading}
                 />
               ) : (
-                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg break-words">{formData.role}</p>
+                <p className="text-white bg-slate-700 px-3 py-2 rounded-lg">{formData.role}</p>
               )}
             </div>
 
@@ -337,7 +353,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
                 disabled={isLoading}
               />
             ) : (
-              <p className="text-white bg-slate-700 px-3 py-2 rounded-lg min-h-[80px] break-words">
+              <p className="text-white bg-slate-700 px-3 py-2 rounded-lg min-h-[80px]">
                 {formData.bio || 'No hay biografía disponible'}
               </p>
             )}
@@ -352,7 +368,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
           </h3>
           
           {userProjects.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {userProjects.map((project) => (
                 <div
                   key={project.id}
@@ -392,20 +408,22 @@ export const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => 
         {/* Estadísticas adicionales */}
         <div className="bg-slate-800 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Estadísticas</h3>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-cyan-500">{userProjects.length}</div>
+              <div className="text-2xl font-bold text-cyan-500">
+                {userProjects.length}
+              </div>
               <div className="text-sm text-gray-400">Proyectos</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-500">
-                {userProjects.filter(p => p.owner_id === user.id).length}
+                {userProjects.filter((p) => p.owner_id === user.id).length}
               </div>
               <div className="text-sm text-gray-400">Como Propietario</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-500">
-                {userProjects.filter(p => p.owner_id !== user.id).length}
+                {userProjects.filter((p) => p.owner_id !== user.id).length}
               </div>
               <div className="text-sm text-gray-400">Como Miembro</div>
             </div>

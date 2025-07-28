@@ -1,7 +1,11 @@
-import { useState, useCallback } from 'react';
-import { useAuthStore } from '../store/auth_store';
-import { updateUserProfile, updateUserAvatar, deleteUserAvatar, getUserStats } from '../api/user';
-import type { UpdateUserProfileRequest } from '../api/user';
+import { useCallback, useState } from "react";
+import { useAuthStore } from "../store/auth_store";
+import {
+  deleteUserAvatar,
+  updateUserAvatar,
+  updateUserProfile,
+} from "../api/user";
+import type { UpdateUserProfileRequest } from "../api/user";
 
 export const useUserProfile = () => {
   const { user, setUser } = useAuthStore();
@@ -10,16 +14,18 @@ export const useUserProfile = () => {
 
   const updateProfile = useCallback(async (data: UpdateUserProfileRequest) => {
     if (!user) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const updatedUser = await updateUserProfile(data);
-      setUser(updatedUser, localStorage.getItem('token'));
+      setUser(updatedUser, localStorage.getItem("token"));
       return updatedUser;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al actualizar el perfil';
+      const errorMessage = err instanceof Error
+        ? err.message
+        : "Error al actualizar el perfil";
       setError(errorMessage);
       throw err;
     } finally {
@@ -29,16 +35,18 @@ export const useUserProfile = () => {
 
   const updateAvatar = useCallback(async (avatar: string) => {
     if (!user) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const updatedUser = await updateUserAvatar({ avatar });
-      setUser(updatedUser, localStorage.getItem('token'));
+      setUser(updatedUser, localStorage.getItem("token"));
       return updatedUser;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al actualizar el avatar';
+      const errorMessage = err instanceof Error
+        ? err.message
+        : "Error al actualizar el avatar";
       setError(errorMessage);
       throw err;
     } finally {
@@ -48,16 +56,18 @@ export const useUserProfile = () => {
 
   const removeAvatar = useCallback(async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const updatedUser = await deleteUserAvatar();
-      setUser(updatedUser, localStorage.getItem('token'));
+      setUser(updatedUser, localStorage.getItem("token"));
       return updatedUser;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al eliminar el avatar';
+      const errorMessage = err instanceof Error
+        ? err.message
+        : "Error al eliminar el avatar";
       setError(errorMessage);
       throw err;
     } finally {
@@ -65,43 +75,37 @@ export const useUserProfile = () => {
     }
   }, [user, setUser]);
 
-  const getStats = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const stats = await getUserStats();
-      return stats;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al cargar las estadísticas';
-      setError(errorMessage);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
-  const validateImageFile = useCallback((file: File): { isValid: boolean; error?: string } => {
-    // Validar tipo de archivo
-    const allowedTypes = ['image/png', 'image/gif', 'image/jpeg', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      return {
-        isValid: false,
-        error: 'Por favor, selecciona un archivo PNG, JPG, JPEG o GIF'
-      };
-    }
 
-    // Validar tamaño (máximo 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      return {
-        isValid: false,
-        error: 'El archivo es demasiado grande. Máximo 5MB'
-      };
-    }
+  const validateImageFile = useCallback(
+    (file: File): { isValid: boolean; error?: string } => {
+      // Validar tipo de archivo
+      const allowedTypes = [
+        "image/png",
+        "image/gif",
+        "image/jpeg",
+        "image/jpg",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        return {
+          isValid: false,
+          error: "Por favor, selecciona un archivo PNG, JPG, JPEG o GIF",
+        };
+      }
 
-    return { isValid: true };
-  }, []);
+      // Validar tamaño (máximo 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        return {
+          isValid: false,
+          error: "El archivo es demasiado grande. Máximo 5MB",
+        };
+      }
+
+      return { isValid: true };
+    },
+    [],
+  );
 
   const processImageFile = useCallback((file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -117,7 +121,7 @@ export const useUserProfile = () => {
         resolve(result);
       };
       reader.onerror = () => {
-        reject(new Error('Error al procesar el archivo'));
+        reject(new Error("Error al procesar el archivo"));
       };
       reader.readAsDataURL(file);
     });
@@ -130,9 +134,8 @@ export const useUserProfile = () => {
     updateProfile,
     updateAvatar,
     removeAvatar,
-    getStats,
     validateImageFile,
     processImageFile,
-    clearError: () => setError(null)
+    clearError: () => setError(null),
   };
 };

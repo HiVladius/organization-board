@@ -74,7 +74,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     try {
       await deleteTask(taskId);
     } catch (error) {
-      
+      throw error;
+
       set({ tasks: originalTasks, error: "No se pudo eliminar la tarea." });
       throw error;
     }

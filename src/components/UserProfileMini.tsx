@@ -1,6 +1,6 @@
-import React from 'react';
-import { UserAvatar } from './ui/UserAvatar';
-import type { User } from '../types/index.types';
+import React from "react";
+import { UserAvatar } from "./ui/UserAvatar";
+import type { User } from "../types/index.types";
 
 interface UserProfileMiniProps {
   user: User;
@@ -9,11 +9,11 @@ interface UserProfileMiniProps {
   className?: string;
 }
 
-export const UserProfileMini: React.FC<UserProfileMiniProps> = ({ 
-  user, 
-  onClick, 
+export const UserProfileMini: React.FC<UserProfileMiniProps> = ({
+  user,
+  onClick,
   showEmail = false,
-  className = '' 
+  className = "",
 }) => {
   const getDisplayName = () => {
     if (user.firstName && user.lastName) {
@@ -23,8 +23,12 @@ export const UserProfileMini: React.FC<UserProfileMiniProps> = ({
   };
 
   return (
-    <div 
-      className={`flex items-center gap-3 ${onClick ? 'cursor-pointer hover:bg-slate-700 rounded-lg p-2 transition-colors' : ''} ${className}`}
+    <div
+      className={`flex items-center gap-3 ${
+        onClick
+          ? "cursor-pointer hover:bg-slate-700 rounded-lg p-2 transition-colors"
+          : ""
+      } ${className}`}
       onClick={onClick}
     >
       <UserAvatar user={user} size="md" showTooltip={!onClick} />

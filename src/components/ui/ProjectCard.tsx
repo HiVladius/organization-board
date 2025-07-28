@@ -89,4 +89,3 @@ export const ProjectCard = ({ project, user }: ProjectCardProps) => {
     </>
   );
 };
-

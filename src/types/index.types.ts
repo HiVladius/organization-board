@@ -81,18 +81,4 @@ export interface TaskWithDateRange {
   date_range?: TaskDateRange;
 }
 
-
-export interface Images {
-  id: string;
-  filename: string;
-  original_filename: string;
-  content_type: string;
-  size: number;
-  url: string;
-  project_id?: string;
-  task_id?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-
+export {};
